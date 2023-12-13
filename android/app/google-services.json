@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "721775011609",
+    "firebase_url": "https://multi-salon-app-default-rtdb.firebaseio.com",
+    "project_id": "multi-salon-app",
+    "storage_bucket": "multi-salon-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721775011609:android:d967ad6a2d038f6d7e4788",
+        "android_client_info": {
+          "package_name": "com.example.saloon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKGeW3RWU-QqMWqeXrtAi9mOlRf4-BqBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
