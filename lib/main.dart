@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/apis/firebase_api.dart';
 import 'package:saloon/features/auth/views/register_view.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
@@ -48,8 +49,9 @@ Widget checkAuthState(FirebaseApi firebaseApi, WidgetRef ref) {
   }
 
   return isLogIn
-      ? const DashboardView(
+      ? DashboardView(
           // pageIndex: 0,
-          )
+          dbApi: ref.watch(firebaseDBApiProvider),
+        )
       : const RegisterView();
 }

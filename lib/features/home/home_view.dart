@@ -1,19 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/home/widgets/favorites_card.dart';
 import 'package:saloon/features/home/widgets/salon_card.dart';
 import 'package:saloon/constants/constants.dart';
 import 'package:saloon/features/profile/profile_view.dart';
+import 'package:saloon/models/saloon.dart';
 
-class HomeView extends StatelessWidget {
-  static route() => MaterialPageRoute(builder: (context) => const HomeView());
-  const HomeView({super.key});
+class HomeView extends ConsumerStatefulWidget {
+  final FirebaseDBApi dbApi;
+  static route({required FirebaseDBApi dbApi}) => MaterialPageRoute(
+      builder: (context) => HomeView(
+            dbApi: dbApi,
+          ));
+  const HomeView({super.key, required this.dbApi});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  late Future<List<Saloon>> saloonFuture;
+
+  Future<List<Saloon>> _getAllSaloons() {
+    var saloonFuture = widget.dbApi.getAllSaloons();
+    return saloonFuture;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    saloonFuture = _getAllSaloons();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wellness Love'),
+        centerTitle: true,
         actions: [
           GestureDetector(
             onTap: () {
@@ -102,16 +128,35 @@ class HomeView extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 30,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < 8; i++) const SalonCard(),
-                    ],
-                  ),
-                ),
+
+              // Add a FutureBuilder here
+              FutureBuilder(
+                future: saloonFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return snapshot.data != null
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var saloon in snapshot.data!)
+                                    SaloonCard(
+                                      saloon: saloon,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: const Text('No Data'),
+                          );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               ),
             ],
           ),

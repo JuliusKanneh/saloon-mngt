@@ -2,15 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/booking/booking_history_view.dart';
+import 'package:saloon/features/booking/booking_view.dart';
 import 'package:saloon/features/home/home_view.dart';
 import 'package:saloon/features/profile/profile_view.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
-  static route() => MaterialPageRoute(
-        builder: (context) => const DashboardView(),
+  final int? selectedIndex;
+  final FirebaseDBApi _firebaseDBApi;
+  static route({
+    /// 0 => landing page
+    /// 1 => booking list view
+    /// 2 => profile
+    /// 3 => booking view
+    int? index,
+    required FirebaseDBApi dbApi,
+  }) =>
+      MaterialPageRoute(
+        builder: (context) => DashboardView(
+          selectedIndex: index,
+          dbApi: dbApi,
+        ),
       );
-  const DashboardView({super.key});
+  const DashboardView({
+    super.key,
+    this.selectedIndex,
+    required FirebaseDBApi dbApi,
+  }) : _firebaseDBApi = dbApi;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardViewState();
@@ -22,12 +41,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   void initState() {
-    // _selectedIndex = widget.pageIndex;
+    _selectedIndex = widget.selectedIndex ?? 0;
 
     _widgetOptions = <Widget>[
-      const HomeView(),
+      HomeView(dbApi: widget._firebaseDBApi),
       const BookingHistoryView(),
       const ProfileView(),
+      const BookingView(),
       // routeToBookDetails(),
     ];
     super.initState();
