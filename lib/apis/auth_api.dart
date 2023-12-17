@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/apis/firebase_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/models/user_account.dart';
@@ -21,16 +22,19 @@ final authApiProvider = Provider((ref) {
   return AuthApi(
     firebaseApi: ref.watch(firebaseApiProvider),
     userAccountProvider: ref.watch(userAccountProvider),
+    firebaseDBApi: ref.watch(firebaseDBApiProvider),
   );
 });
 
 class AuthApi implements IAuthApi {
   final FirebaseApi firebaseApi;
   final UserAccountProvider userAccountProvider;
+  final FirebaseDBApi firebaseDBApi;
 
   AuthApi({
     required this.firebaseApi,
     required this.userAccountProvider,
+    required this.firebaseDBApi,
   });
 
   @override
@@ -46,18 +50,17 @@ class AuthApi implements IAuthApi {
       );
 
       //save user data to database
-      // user.setId(userCredential.user!.uid);
-      // var saveUserData = await firebaseDBApi.saveUserData(user);
-      // if (userCredential.user != null && saveUserData) {
-      //   log('successful signup');
-      //   userAccountProvider.setDriver(user);
-      //   return right(userCredential);
-      // } else {
-      //   return left(
-      //     Failure(message: 'Error', stackTrace: StackTrace.current),
-      //   );
-      // }
-      return right(userCredential);
+      user.setId(userCredential.user!.uid);
+      var saveUserData = await firebaseDBApi.saveUserData(user);
+      if (userCredential.user != null && saveUserData) {
+        log('successful signup');
+        userAccountProvider.setUser(user);
+        return right(userCredential);
+      } else {
+        return left(
+          Failure(message: 'Error', stackTrace: StackTrace.current),
+        );
+      }
     } on FirebaseAuthException catch (e, st) {
       log('error message: ${e.message}\nStacktrace: $st');
       return left(

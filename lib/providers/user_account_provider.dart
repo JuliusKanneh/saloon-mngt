@@ -8,9 +8,9 @@ final userAccountProvider = Provider((ref) {
 class UserAccountProvider {
   UserAccount? user;
 
-  void setDriver(UserAccount user) {
+  void setUser(UserAccount user) {
     this.user = user;
   }
 
-  UserAccount? getDriver() => user;
+  UserAccount? getUser() => user;
 }

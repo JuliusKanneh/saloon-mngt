@@ -3,32 +3,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:saloon/apis/db_api.dart';
-import 'package:saloon/features/booking/booking_history_view.dart';
-import 'package:saloon/features/booking/booking_view.dart';
+import 'package:saloon/features/booking/controllers/booking_controller.dart';
+import 'package:saloon/features/booking/views/booking_history_view.dart';
+import 'package:saloon/features/booking/views/booking_form_view.dart';
+import 'package:saloon/features/booking/views/booking_success_view.dart';
 import 'package:saloon/features/home/home_view.dart';
 import 'package:saloon/features/profile/profile_view.dart';
+import 'package:saloon/models/saloon.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   final int? selectedIndex;
   final FirebaseDBApi _firebaseDBApi;
+  final Saloon? saloon;
   static route({
     /// 0 => landing page
     /// 1 => booking list view
     /// 2 => profile
-    /// 3 => booking view
+    /// 3 => booking form view
+    /// 4 => booking success view
     int? index,
     required FirebaseDBApi dbApi,
+    Saloon? saloon,
   }) =>
       MaterialPageRoute(
         builder: (context) => DashboardView(
           selectedIndex: index,
           dbApi: dbApi,
+          saloon: saloon,
         ),
       );
   const DashboardView({
     super.key,
     this.selectedIndex,
     required FirebaseDBApi dbApi,
+    this.saloon,
   }) : _firebaseDBApi = dbApi;
 
   @override
@@ -45,9 +53,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     _widgetOptions = <Widget>[
       HomeView(dbApi: widget._firebaseDBApi),
-      const BookingHistoryView(),
+      BookingHistoryView(
+        bookingController: ref.read(bookingControllerProvider.notifier),
+      ),
       const ProfileView(),
-      const BookingView(),
+      BookingFormView(
+        saloon: widget.saloon,
+      ),
+      const BookingSuccessView(),
       // routeToBookDetails(),
     ];
     super.initState();

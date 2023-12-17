@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:saloon/apis/firebase_api.dart';
 import 'package:saloon/features/auth/views/register_view.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
 import 'package:saloon/firebase_options.dart';
+import 'package:saloon/providers/user_account_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,13 +41,13 @@ Widget checkAuthState(FirebaseApi firebaseApi, WidgetRef ref) {
   var currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser != null) {
     // loadUserData(ref, currentUser);
-    // ref
-    //     .watch(firebaseRTDBApiProvider)
-    //     .findUserByUid(currentUser.uid)
-    //     .then((value) {
-    //   log('value: $value');
-    //   ref.watch(userDataProvider).setUserData(value);
-    // });
+    ref
+        .watch(firebaseDBApiProvider)
+        .findUserByUid(currentUser.uid)
+        .then((value) {
+      log('value: $value');
+      ref.read(userAccountProvider).setUser(value);
+    });
     isLogIn = true;
   }
 

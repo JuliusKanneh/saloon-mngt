@@ -40,6 +40,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       appBar: AppBar(
         title: const Text('Wellness Love'),
         centerTitle: true,
+        backgroundColor: Colors.grey.shade100,
+        elevation: 2,
         actions: [
           GestureDetector(
             onTap: () {
@@ -61,7 +63,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
         ],
-        elevation: 2,
         // centerTitle: true,
       ),
       body: SingleChildScrollView(

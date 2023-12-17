@@ -1,44 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserAccount {
   String? id;
-  final String? firstName;
-  final String? lastName;
+  final String? name;
   final String? email;
-  final String? phoneNumber;
-  final String? photo;
-  final String? plateNumber;
+  final String? photoUrl;
 
   UserAccount({
     this.id,
-    required this.firstName,
-    required this.lastName,
+    this.name,
     required this.email,
-    required this.phoneNumber,
-    this.photo,
-    this.plateNumber,
+    this.photoUrl,
   });
 
-  // factory UserAccount.fromFirestore(
-  //     DocumentSnapshot<Map<String, dynamic>> snapshot) {
-  //   final data = snapshot.data();
-  //   return UserAccount(
-  //     id: snapshot.id,
-  //     firstName: data?['firstname'],
-  //     lastName: data?['lastname'],
-  //     email: data?['email'],
-  //     phoneNumber: data?['phone_number'],
-  //     photo: data?['photo'],
-  //     plateNumber: data?['plate_number'],
-  //   );
-  // }
+  factory UserAccount.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data();
+    return UserAccount(
+      id: snapshot.id,
+      name: data?['name'],
+      email: data?['email'],
+      photoUrl: data?['photo_url'],
+    );
+  }
 
   Map<String, dynamic> toFireStore() {
     return {
-      if (firstName != null) "firstname": firstName,
-      if (lastName != null) "lastname": lastName,
+      if (name != null) "name": name,
       if (email != null) "email": email,
-      if (phoneNumber != null) "phone_number": phoneNumber,
-      if (photo != null) "photo": photo,
-      if (plateNumber != null) "plate_number": plateNumber,
+      if (photoUrl != null) "phto_url": photoUrl,
     };
   }
 

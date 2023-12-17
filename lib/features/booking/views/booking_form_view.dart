@@ -2,16 +2,23 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saloon/apis/db_api.dart';
+import 'package:saloon/features/booking/controllers/booking_controller.dart';
+import 'package:saloon/features/dashboard/views/dashboard_view.dart';
+import 'package:saloon/models/booking.dart';
+import 'package:saloon/models/saloon.dart';
+import 'package:saloon/providers/user_account_provider.dart';
 
-class BookingView extends ConsumerStatefulWidget {
-  const BookingView({super.key});
+class BookingFormView extends ConsumerStatefulWidget {
+  final Saloon? saloon;
+  const BookingFormView({super.key, required this.saloon});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _BookingViewState();
 }
 
-class _BookingViewState extends ConsumerState<BookingView> {
-  final GlobalKey _formKey = GlobalKey<FormState>();
+class _BookingViewState extends ConsumerState<BookingFormView> {
+  final _formKey = GlobalKey<FormState>();
   TextEditingController timeController =
       TextEditingController(text: 'No time selected');
   TextEditingController dateController = TextEditingController();
@@ -19,11 +26,19 @@ class _BookingViewState extends ConsumerState<BookingView> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? gender;
+  bool isLoading = false;
 
   void _showDatePicker(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+
+      /// The initial date for the booking view.
+      /// If the current day is Saturday (weekday == 6), the initial date will be two days ahead.
+      /// Otherwise, the initial date will be one day ahead of the current date.
+
+      initialDate: DateTime.now().weekday == 6
+          ? DateTime.now().add(const Duration(days: 2))
+          : DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime(2023),
       lastDate: DateTime(2025),
       selectableDayPredicate: (day) {
@@ -33,7 +48,9 @@ class _BookingViewState extends ConsumerState<BookingView> {
         }
 
         // Disable days before today
-        return day.isAfter(DateTime.now().subtract(Duration(days: 1)));
+        return day.isAfter(DateTime.now().subtract(
+          const Duration(days: 1),
+        ));
       },
     );
 
@@ -98,6 +115,14 @@ class _BookingViewState extends ConsumerState<BookingView> {
                           ? selectedDate.toString()
                           : 'No date selected',
                     ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty ||
+                          value == 'No date selected') {
+                        return 'Please select a date';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -125,6 +150,14 @@ class _BookingViewState extends ConsumerState<BookingView> {
                           ? selectedTime!.format(context)
                           : 'No time selected',
                     ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty ||
+                          value == 'No time selected') {
+                        return 'Please select a date';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -145,20 +178,26 @@ class _BookingViewState extends ConsumerState<BookingView> {
                       labelText: 'Gender',
                       border: InputBorder.none,
                     ),
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         value: 'Male',
-                        child: const Text('Male'),
+                        child: Text('Male'),
                       ),
                       DropdownMenuItem(
                         value: 'Female',
-                        child: const Text('Female'),
+                        child: Text('Female'),
                       ),
                       DropdownMenuItem(
                         value: 'Other',
-                        child: const Text('Other'),
+                        child: Text('Other'),
                       ),
                     ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a date';
+                      }
+                      return null;
+                    },
                     onChanged: (value) {
                       setState(() {
                         gender = value;
@@ -170,17 +209,49 @@ class _BookingViewState extends ConsumerState<BookingView> {
                   height: 40,
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    var date = selectedDate ?? selectedDate;
-                    var time = selectedTime != null
-                        ? selectedTime!.format(context)
-                        : 'No time selected';
+                  onPressed: () async {
+                    // var date = selectedDate != null
+                    //     ? selectedDate!.toString().split(' ')[0]
+                    //     : 'No date selected';
+                    // var time = selectedTime != null
+                    //     ? selectedTime!.format(context)
+                    //     : 'No time selected';
 
-                    log('Date: ${date.toString().split(' ')[0]}');
-                    log('Time: ${time.toString().split(' ')[0]}');
-                    log('Gender: ${time.toString().split(' ')[0]}');
+                    // log('Time: ${selectedTime.toString().substring(10, 15)}');
+
+                    // log('Date: ${date.toString().split(' ')[0]}');
+                    // log('Time: ${time.toString().split(' ')[0]}');
+                    // log('Gender: $gender');
+
+                    Booking booking = Booking(
+                      userId: ref.watch(userAccountProvider).user!.id,
+                      saloonId: widget.saloon!.id,
+                      date: selectedDate,
+                      time: selectedTime,
+                      gender: gender,
+                      status: 'Pending',
+                    );
+
+                    log('Booking: ${booking.toFirestore()}');
+
+                    // check if the form is valid
+                    if (!_formKey.currentState!.validate()) {
+                      return;
+                    }
+
+                    // save booking to database
+                    isLoading = true;
+
+                    await ref
+                        .watch(bookingControllerProvider.notifier)
+                        .book(booking, context);
+
+                    isLoading = false;
+                    routeToBookingSuccess();
                   },
-                  child: const Text('Book Now'),
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Book Now'),
                 ),
               ],
             ),
@@ -188,5 +259,13 @@ class _BookingViewState extends ConsumerState<BookingView> {
         ),
       ),
     );
+  }
+
+  void routeToBookingSuccess() {
+    Navigator.of(context).push(DashboardView.route(
+      index: 4,
+      dbApi: ref.watch(firebaseDBApiProvider),
+      saloon: widget.saloon,
+    ));
   }
 }

@@ -122,20 +122,12 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                                   if (_formKey.currentState!.validate()) {
                                     authController.register(
                                       user: UserAccount(
-                                        firstName:
-                                            firstNameTextEditingController.text
-                                                .trim(),
-                                        lastName: lastNameTextEditingController
+                                        name: firstNameTextEditingController
                                             .text
                                             .trim(),
                                         email: emailTextEditingController.text
                                             .trim(),
-                                        phoneNumber:
-                                            phoneNumberTextEditingController
-                                                .text
-                                                .trim(),
-                                        photo: "",
-                                        plateNumber: "",
+                                        photoUrl: "",
                                       ),
                                       password: passwordTextEditingController
                                           .text

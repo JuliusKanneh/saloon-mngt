@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
@@ -36,6 +38,7 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                     widget.saloon.photoUrl ?? 'NULL',
                     fit: BoxFit.fill,
                     loadingBuilder: (context, child, loadingProgress) {
+                      log('Progress: $loadingProgress');
                       if (loadingProgress == null) return child;
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -87,9 +90,10 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                     Navigator.of(context).push(DashboardView.route(
                       index: 3,
                       dbApi: ref.watch(firebaseDBApiProvider),
+                      saloon: widget.saloon,
                     ));
                   },
-                  child: const Text('Book Now'),
+                  child: const Text('Book'),
                 ),
               ],
             ),
