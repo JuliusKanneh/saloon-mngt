@@ -10,6 +10,7 @@ import 'package:saloon/features/auth/views/register_view.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
 import 'package:saloon/firebase_options.dart';
 import 'package:saloon/providers/user_account_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,15 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var firebaseApi = ref.watch(firebaseApiProvider);
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('es', ''),
+        Locale('de', ''),
+      ],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

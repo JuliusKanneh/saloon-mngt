@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:saloon/apis/db_api.dart';
+import 'package:saloon/features/dashboard/views/dashboard_view.dart';
 import 'package:saloon/features/home/widgets/favorites_card.dart';
 import 'package:saloon/features/home/widgets/salon_card.dart';
 import 'package:saloon/constants/constants.dart';
-import 'package:saloon/features/profile/profile_view.dart';
 import 'package:saloon/models/saloon.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -45,7 +45,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
         actions: [
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(ProfileView.route());
+              Navigator.of(context).push(
+                DashboardView.route(
+                  index: 5,
+                  dbApi: ref.read(firebaseDBApiProvider),
+                ),
+              );
             },
             child: Container(
               width: 40,

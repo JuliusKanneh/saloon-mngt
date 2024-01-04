@@ -6,7 +6,6 @@ import 'package:saloon/apis/auth_api.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/auth/views/login_view.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
-import 'package:saloon/features/home/home_view.dart';
 import 'package:saloon/models/user_account.dart';
 import 'package:saloon/features/auth/common/common.dart';
 
@@ -55,7 +54,7 @@ class AuthController extends StateNotifier<bool> {
     state = false;
 
     res.fold((l) => showSnackbar(l.message, context),
-        (r) => Navigator.of(context).push(HomeView.route(dbApi: _dbApi)));
+        (r) => Navigator.of(context).push(DashboardView.route(dbApi: _dbApi)));
   }
 
   void signOut(BuildContext context) async {

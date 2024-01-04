@@ -4,17 +4,21 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/booking/controllers/booking_controller.dart';
+import 'package:saloon/features/booking/views/booking_detail_view.dart';
 import 'package:saloon/features/booking/views/booking_history_view.dart';
 import 'package:saloon/features/booking/views/booking_form_view.dart';
 import 'package:saloon/features/booking/views/booking_success_view.dart';
 import 'package:saloon/features/home/home_view.dart';
-import 'package:saloon/features/profile/profile_view.dart';
+import 'package:saloon/features/notification/view/notification_view.dart';
+import 'package:saloon/features/profile/view/profile_view.dart';
+import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   final int? selectedIndex;
   final FirebaseDBApi _firebaseDBApi;
   final Saloon? saloon;
+  final Booking? booking;
   static route({
     /// 0 => landing page
     /// 1 => booking list view
@@ -24,6 +28,7 @@ class DashboardView extends ConsumerStatefulWidget {
     int? index,
     required FirebaseDBApi dbApi,
     Saloon? saloon,
+    Booking? booking,
   }) =>
       MaterialPageRoute(
         builder: (context) => DashboardView(
@@ -37,6 +42,7 @@ class DashboardView extends ConsumerStatefulWidget {
     this.selectedIndex,
     required FirebaseDBApi dbApi,
     this.saloon,
+    this.booking,
   }) : _firebaseDBApi = dbApi;
 
   @override
@@ -56,11 +62,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       BookingHistoryView(
         bookingController: ref.read(bookingControllerProvider.notifier),
       ),
-      const ProfileView(),
+      const NotificationView(),
       BookingFormView(
         saloon: widget.saloon,
       ),
       const BookingSuccessView(),
+      const ProfileView(),
+      BookingDetailView(booking: widget.booking),
       // routeToBookDetails(),
     ];
     super.initState();

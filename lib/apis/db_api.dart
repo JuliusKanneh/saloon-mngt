@@ -45,6 +45,15 @@ class FirebaseDBApi {
     _db.collection('booking').add(booking.toFirestore());
   }
 
+  // delete booking
+  Future<void> deleteBooking(String id) async {
+    // _db.collection("booking").doc(id).delete().then(
+    //       (doc) => log("Document deleted"),
+    //       onError: (e) => log("Error updating document $e"),
+    //     );
+    await _db.collection("booking").doc(id).delete();
+  }
+
   Future<List<Booking>> getAllBookings() async {
     allBookings.clear();
     var querySnapshot = await _db.collection('booking').get();
