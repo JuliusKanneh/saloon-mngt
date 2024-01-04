@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/features/auth/controller/auth_controller.dart';
 import 'package:saloon/models/user_account.dart';
 import 'package:saloon/theme/color_palette.dart';
 
-class AuthButton extends StatelessWidget {
+class AuthButton extends ConsumerWidget {
   final bool isRegistrationBtn;
   final GlobalKey<FormState> formKey;
   final AuthController authController;
@@ -19,7 +20,7 @@ class AuthButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       // onTap: isRegistrationBtn ? register : login,
       onTap: () {
@@ -32,7 +33,11 @@ class AuthButton extends StatelessWidget {
         } else {
           if (formKey.currentState!.validate()) {
             formKey.currentState!.save();
-            authController.login(user.email!, password, context);
+            authController.login(
+                email: user.email!,
+                password: password,
+                context: context,
+                ref: ref);
           }
         }
       },

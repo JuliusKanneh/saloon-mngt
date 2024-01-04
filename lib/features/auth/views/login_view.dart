@@ -82,9 +82,13 @@ class _RegisterViewState extends ConsumerState<LoginView> {
                                 onTap: () {
                                   if (_formKey.currentState!.validate()) {
                                     authController.login(
-                                      emailTextEditingController.text.trim(),
-                                      passwordTextEditingController.text.trim(),
-                                      context,
+                                      email: emailTextEditingController.text
+                                          .trim(),
+                                      password: passwordTextEditingController
+                                          .text
+                                          .trim(),
+                                      context: context,
+                                      ref: ref,
                                     );
                                   }
                                 },

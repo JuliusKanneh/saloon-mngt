@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/auth_api.dart';
+import 'package:saloon/features/auth/views/login_view.dart';
 import 'package:saloon/providers/user_account_provider.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
@@ -13,6 +14,8 @@ class ProfileView extends ConsumerStatefulWidget {
 }
 
 class _ProfileViewState extends ConsumerState<ProfileView> {
+  bool isLoadingOnLogout = false;
+
   @override
   Widget build(BuildContext context) {
     var user = ref.watch(userAccountProvider).getUser();
@@ -95,17 +98,46 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                       height: 20,
                     ),
                     TextButton(
-                      onPressed: () {
-                        // Logout user
-                        ref.read(authApiProvider).signOut();
+                      onPressed: () async {
+                        // set isLoadingOnLogout to true to start loading
+                        setState(() {
+                          isLoadingOnLogout = true;
+                        });
+
+                        var res = await ref.read(authApiProvider).signOut();
+
+                        // set isLoadingOnLogout to false to stop loading
+                        setState(() {
+                          isLoadingOnLogout = false;
+                        });
+
+                        res.fold(
+                          (failure) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(failure.message),
+                              ),
+                            );
+                          },
+                          (userCredential) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Logout successful'),
+                              ),
+                            );
+                            Navigator.of(context).push(LoginView.route());
+                          },
+                        );
                       },
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: isLoadingOnLogout
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              'Logout',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ],
                 ),
