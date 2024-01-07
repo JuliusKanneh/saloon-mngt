@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saloon/constants/constants.dart';
 import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
 import 'package:saloon/models/user_account.dart';
@@ -57,6 +58,24 @@ class FirebaseDBApi {
   Future<List<Booking>> getAllBookings() async {
     allBookings.clear();
     var querySnapshot = await _db.collection('booking').get();
+    log('response: ${querySnapshot.docs}');
+
+    for (var booking in querySnapshot.docs) {
+      log('Booking ${booking.id}: $booking');
+      allBookings.add(Booking.fromFirestore(booking));
+    }
+
+    log('all bookings: $allBookings');
+
+    return allBookings;
+  }
+
+  Future<List<Booking>> getBookingsUserId(String userId) async {
+    allBookings.clear();
+    var querySnapshot = await _db
+        .collection('booking')
+        .where("user_id", isEqualTo: userId)
+        .get();
     log('response: ${querySnapshot.docs}');
 
     for (var booking in querySnapshot.docs) {

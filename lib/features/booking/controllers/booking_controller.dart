@@ -22,6 +22,10 @@ class BookingController extends StateNotifier<bool> {
     return await _dbApi.getAllBookings();
   }
 
+  Future<List<Booking>> getBookingsUserId(String userId) async {
+    return await _dbApi.getBookingsUserId(userId);
+  }
+
   Future<void> deleteBooking(String id) async {
     await _dbApi.deleteBooking(id);
   }
