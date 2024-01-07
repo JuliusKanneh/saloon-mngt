@@ -7,6 +7,8 @@ import 'package:saloon/features/home/widgets/favorites_card.dart';
 import 'package:saloon/features/home/widgets/salon_card.dart';
 import 'package:saloon/constants/constants.dart';
 import 'package:saloon/models/saloon.dart';
+import 'package:saloon/providers/user_account_provider.dart';
+import 'package:saloon/constants/constants.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   final FirebaseDBApi dbApi;
@@ -36,6 +38,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    var currentUser = ref.watch(userAccountProvider).getUser();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wellness Love'),
@@ -91,14 +95,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Add Salon'),
-                      ),
-                    ],
-                  ),
+                  if (currentUser?.role == adminUserRole)
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Add Salon'),
+                        ),
+                      ],
+                    ),
                 ],
               ),
               regularVerticalSpacing(),
