@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
@@ -9,7 +7,7 @@ import 'package:saloon/features/dashboard/views/dashboard_view.dart';
 import 'package:saloon/models/saloon.dart';
 
 class SaloonCard extends ConsumerStatefulWidget {
-  final Saloon saloon;
+  final Salon saloon;
   const SaloonCard({
     super.key,
     required this.saloon,
@@ -34,17 +32,23 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                 SizedBox(
                   width: 147,
                   height: 120,
-                  child: Image.network(
-                    widget.saloon.photoUrl ?? 'NULL',
+                  child: Image.asset(
+                    'assets/moriah.jpg',
                     fit: BoxFit.fill,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      log('Progress: $loadingProgress');
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
                   ),
+
+                  //TODO: fix this
+                  // child: Image.network(
+                  //   widget.saloon.photoUrl ?? 'NULL',
+                  //   fit: BoxFit.fill,
+                  //   loadingBuilder: (context, child, loadingProgress) {
+                  //     log('Progress: $loadingProgress');
+                  //     if (loadingProgress == null) return child;
+                  //     return const Center(
+                  //       child: CircularProgressIndicator(),
+                  //     );
+                  //   },
+                  // ),
                 ),
               ],
             ),

@@ -56,7 +56,7 @@ Widget checkAuthState(FirebaseApi firebaseApi, WidgetRef ref) {
         .findUserByUid(currentUser.uid)
         .then((value) {
       log('value: $value');
-      ref.read(userAccountProvider).setUser(value);
+      ref.watch(userAccountProvider).setUser(value);
     });
     isLogIn = true;
   }

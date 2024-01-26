@@ -55,60 +55,63 @@ class _BookingHistoryView extends ConsumerState<BookingHistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Booking History'),
-        centerTitle: true,
-        backgroundColor: Colors.grey.shade100,
-        elevation: 2,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              DashboardView.route(
-                dbApi: ref.read(firebaseDBApiProvider),
-              ),
-            );
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Booking History'),
+          centerTitle: true,
+          // backgroundColor: Colors.grey.shade100,
+          elevation: 2,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                DashboardView.route(
+                  dbApi: ref.read(firebaseDBApiProvider),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
           ),
         ),
-      ),
-      body: Container(
-        margin: const EdgeInsets.all(10),
-        child: FutureBuilder(
-          future: bookingListFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              List<Booking> bookings = snapshot.data!;
+        body: Container(
+          margin: const EdgeInsets.all(10),
+          child: FutureBuilder(
+            future: bookingListFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                List<Booking> bookings = snapshot.data!;
 
-              return bookings.isNotEmpty
-                  ? SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          for (var booking in bookings)
-                            BookingHistoryCard(
-                              booking: booking,
-                            ),
-                        ],
-                      ),
-                    )
-                  : Center(
-                      child: Column(
-                        children: [
-                          const Text('You haven\'t book yet. '),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Book Now'),
-                          )
-                        ],
-                      ),
-                    );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+                return bookings.isNotEmpty
+                    ? SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            for (var booking in bookings)
+                              BookingHistoryCard(
+                                booking: booking,
+                              ),
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Column(
+                          children: [
+                            const Text('You haven\'t book yet. '),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('Book Now'),
+                            )
+                          ],
+                        ),
+                      );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
       ),
     );
