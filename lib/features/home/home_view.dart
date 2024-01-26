@@ -251,26 +251,53 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             });
                                             // create a saloon object
                                             Salon saloon = Salon(
-                                                name: salonNameController.text
-                                                    .trim(),
-                                                address: salonAddressController
-                                                    .text
-                                                    .trim(),
-                                                contact: salonContactController
-                                                    .text
-                                                    .trim(),
-                                                managerName:
-                                                    salonManagerNameController
-                                                        .text
-                                                        .trim(),
-                                                photoUrl: logoUrl);
+                                              name: salonNameController.text
+                                                  .trim(),
+                                              address: salonAddressController
+                                                  .text
+                                                  .trim(),
+                                              contact: salonContactController
+                                                  .text
+                                                  .trim(),
+                                              managerName:
+                                                  salonManagerNameController
+                                                      .text
+                                                      .trim(),
+                                              photoUrl: logoUrl,
+                                            );
+
                                             // add the saloon
-                                            var isSaved = await homeController
+                                            var res = await homeController
                                                 .addSaloon(saloon);
-                                            setState(() {
-                                              addSalonLoading = false;
+                                            res.fold((l) {
+                                              setState(() {
+                                                addSalonLoading = false;
+                                              });
+                                              showSuccessDialog(false);
+                                            }, (r) {
+                                              //upload image to storage and save image url to database
+                                              ref
+                                                  .watch(sotreDataProvider)
+                                                  .uploadImageToStorage(
+                                                    fileName: r.id!,
+                                                    file: _image!,
+                                                    folderName: "SalonLogos",
+                                                  )
+                                                  .then((value) async {
+                                                //update salon logo url
+                                                await ref
+                                                    .watch(
+                                                        firebaseDBApiProvider)
+                                                    .updateSalonLogoUrl(
+                                                      photoUrl: value,
+                                                      salonId: r.id!,
+                                                    );
+                                              });
+                                              setState(() {
+                                                addSalonLoading = false;
+                                              });
+                                              showSuccessDialog(true);
                                             });
-                                            showSuccessDialog(isSaved);
                                           },
                                           child: addSalonLoading
                                               ? const CircularProgressIndicator()

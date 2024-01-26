@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
-import 'package:saloon/features/home/home_controller.dart';
-import 'package:saloon/features/home/home_view.dart';
 import 'package:saloon/features/salons/controller/salon_controller.dart';
 
 /// Shows an alert dialog with the given [title] and [content].
 /// When the dialog is dismissed, it navigates back to the home screen.
 /// If [ref] is provided, it will also refresh the list of saloons.
 /// If [ref] is not provided, it will not refresh the list of saloons.
-//TODO: make this a generic function. That's why we have the WidgetRef parameter
 void showAlertDialog(
     {required String title,
     required String content,

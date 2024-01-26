@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/db_api.dart';
+import 'package:saloon/common/common.dart';
 import 'package:saloon/models/saloon.dart';
 
 final homeControllerProvider =
@@ -19,8 +20,8 @@ class HomeController extends StateNotifier<bool> {
     return await _dbApi.getAllSaloons();
   }
 
-  Future<bool> addSaloon(Salon saloon) async {
-    log("addSaloon: $saloon");
+  FutureEither<Salon> addSaloon(Salon saloon) async {
+    // log("addSaloon: $saloon");
     return await _dbApi.addSalon(saloon);
   }
 

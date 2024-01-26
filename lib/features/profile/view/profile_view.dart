@@ -87,18 +87,21 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                                       backgroundImage: MemoryImage(_image!),
                                     )
                                   : ClipOval(
-                                      child: Image.network(
-                                        user!.photoUrl!,
-                                        width: 150,
-                                        height: 150,
-                                        fit: BoxFit.cover,
-                                        loadingBuilder:
-                                            (context, child, progress) {
-                                          return progress == null
-                                              ? child
-                                              : const CircularProgressIndicator();
-                                        },
-                                      ),
+                                      child: (user!.photoUrl == null)
+                                          ? Image.asset("assets/avatar.png")
+                                          : Image.network(
+                                              //TODO: Add default image if user has not uploaded any image
+                                              user.photoUrl!,
+                                              width: 150,
+                                              height: 150,
+                                              fit: BoxFit.cover,
+                                              loadingBuilder:
+                                                  (context, child, progress) {
+                                                return progress == null
+                                                    ? child
+                                                    : const CircularProgressIndicator();
+                                              },
+                                            ),
                                     ),
                             ),
                             Positioned(

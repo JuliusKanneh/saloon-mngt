@@ -26,7 +26,17 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? gender;
+  String? style;
   bool isLoading = false;
+
+  String selectedGender = 'male';
+  List<String> maleStyles = ['Male Style 1', 'Male Style 2', 'Male Style 3'];
+  List<String> femaleStyles = [
+    'Female Style 1',
+    'Female Style 2',
+    'Female Style 3'
+  ];
+  List<String> currentStyles = [];
 
   void _showDatePicker(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -35,17 +45,20 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
       /// The initial date for the booking view.
       /// If the current day is Saturday (weekday == 6), the initial date will be two days ahead.
       /// Otherwise, the initial date will be one day ahead of the current date.
+      //TODO: Uncomment the code below to enable the initial date to be two days ahead of the current date if the current day is Saturday.
+      // initialDate: DateTime.now().weekday == 6
+      //     ? DateTime.now().add(const Duration(days: 2))
+      //     : DateTime.now().add(const Duration(days: 1)),
 
-      initialDate: DateTime.now().weekday == 6
-          ? DateTime.now().add(const Duration(days: 2))
-          : DateTime.now().add(const Duration(days: 1)),
+      initialDate: DateTime.now(),
       firstDate: DateTime(2023),
       lastDate: DateTime(2025),
       selectableDayPredicate: (day) {
         // Disable weekend days to select from the calendar
-        if (day.weekday == 6 || day.weekday == 7) {
-          return false;
-        }
+        //TODO: Uncomment to disable weekend days to select from the calendar
+        // if (day.weekday == 6 || day.weekday == 7) {
+        //   return false;
+        // }
 
         // Disable days before today
         return day.isAfter(DateTime.now().subtract(
@@ -182,18 +195,59 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                       ),
                       items: const [
                         DropdownMenuItem(
-                          value: 'Male',
+                          value: 'male',
                           child: Text('Male'),
                         ),
                         DropdownMenuItem(
-                          value: 'Female',
+                          value: 'female',
                           child: Text('Female'),
                         ),
-                        DropdownMenuItem(
-                          value: 'Other',
-                          child: Text('Other'),
-                        ),
+                        // DropdownMenuItem(
+                        //   value: 'Other',
+                        //   child: Text('Other'),
+                        // ),
                       ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a gender';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        log("value: $value");
+                        setState(() {
+                          gender = value;
+                          selectedGender = value!;
+                          updateStyleDropdown();
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black54,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      value: currentStyles.isNotEmpty ? currentStyles[0] : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Style',
+                        border: InputBorder.none,
+                      ),
+                      items: currentStyles.map((String style) {
+                        return DropdownMenuItem<String>(
+                          value: style,
+                          child: Text(style),
+                        );
+                      }).toList(),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please select a date';
@@ -202,7 +256,7 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                       },
                       onChanged: (value) {
                         setState(() {
-                          gender = value;
+                          style = value;
                         });
                       },
                     ),
@@ -231,6 +285,7 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                         date: selectedDate,
                         time: selectedTime,
                         gender: gender,
+                        style: style,
                         status: 'Pending',
                       );
 
@@ -262,6 +317,16 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
         ),
       ),
     );
+  }
+
+  void updateStyleDropdown() {
+    setState(() {
+      if (selectedGender == 'male') {
+        currentStyles = List.from(maleStyles);
+      } else if (selectedGender == 'female') {
+        currentStyles = List.from(femaleStyles);
+      }
+    });
   }
 
   void routeToBookingSuccess() {

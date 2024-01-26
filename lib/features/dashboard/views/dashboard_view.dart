@@ -4,7 +4,6 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/booking/controllers/booking_controller.dart';
-import 'package:saloon/features/booking/views/booking_detail_view.dart';
 import 'package:saloon/features/booking/views/booking_history_view.dart';
 import 'package:saloon/features/booking/views/booking_form_view.dart';
 import 'package:saloon/features/booking/views/booking_success_view.dart';

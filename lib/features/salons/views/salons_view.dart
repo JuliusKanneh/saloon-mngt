@@ -2,7 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/apis/storage_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/features/home/home_controller.dart';
@@ -34,22 +36,24 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
   final salonContactController = TextEditingController();
   final salonManagerNameController = TextEditingController();
   Uint8List? _image;
+  String? logoUrl;
 
   Future<List<Salon>> _getAllSaloons() {
     var saloonFuture = widget.salonController.getAllSaloons();
     return saloonFuture;
   }
 
-  Future<String> uploadPhoto(String salonId) async {
+  Future<void> getPhotoFromGallery() async {
     Uint8List? image = await pickImage(ImageSource.gallery);
     setState(() {
       _image = image;
     });
 
     //upload image to storage and save image url to database
-    var downloadUrl = await ref.watch(sotreDataProvider).uploadImageToStorage(
-        fileName: salonId, file: image!, folderName: "salon");
-    return downloadUrl;
+    // var downloadUrl = await ref.watch(sotreDataProvider).uploadImageToStorage(
+    //     fileName: salonId, file: image!, folderName: "salon");
+
+    // return downloadUrl;
   }
 
   @override
@@ -135,8 +139,12 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
     );
   }
 
-  Future<dynamic> showSalonForm(BuildContext context, String logoUrl,
-      UserAccount? currentUser, HomeController homeController) {
+  Future<dynamic> showSalonForm(
+    BuildContext context,
+    String? logoUrl,
+    UserAccount? currentUser,
+    HomeController homeController,
+  ) {
     return showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -195,7 +203,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                         const SizedBox(width: 10),
                         TextButton(
                           onPressed: () async {
-                            logoUrl = await uploadPhoto(currentUser!.id!);
+                            await getPhotoFromGallery();
                           },
                           child: (_image == null)
                               ? const Text("Upload Logo")
@@ -223,19 +231,44 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                   setState(() {
                     addSalonLoading = true;
                   });
+
                   // create a saloon object
                   Salon saloon = Salon(
-                      name: salonNameController.text.trim(),
-                      address: salonAddressController.text.trim(),
-                      contact: salonContactController.text.trim(),
-                      managerName: salonManagerNameController.text.trim(),
-                      photoUrl: logoUrl);
+                    name: salonNameController.text.trim(),
+                    address: salonAddressController.text.trim(),
+                    contact: salonContactController.text.trim(),
+                    managerName: salonManagerNameController.text.trim(),
+                    photoUrl: logoUrl,
+                  );
+                  
                   // add the saloon
-                  var isSaved = await homeController.addSaloon(saloon);
-                  setState(() {
-                    addSalonLoading = false;
+                  var res = await homeController.addSaloon(saloon);
+                  res.fold((l) {
+                    setState(() {
+                      addSalonLoading = false;
+                    });
+                    showSuccessDialog(false);
+                  }, (r) {
+                    //upload image to storage and save image url to database
+                    ref
+                        .watch(sotreDataProvider)
+                        .uploadImageToStorage(
+                          fileName: r.id!,
+                          file: _image!,
+                          folderName: "SalonLogos",
+                        )
+                        .then((value) async {
+                      //update salon logo url
+                      await ref.watch(firebaseDBApiProvider).updateSalonLogoUrl(
+                            photoUrl: value,
+                            salonId: r.id!,
+                          );
+                    });
+                    setState(() {
+                      addSalonLoading = false;
+                    });
+                    showSuccessDialog(true);
                   });
-                  showSuccessDialog(isSaved);
                 },
                 child: addSalonLoading
                     ? const CircularProgressIndicator()

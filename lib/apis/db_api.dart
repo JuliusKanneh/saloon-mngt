@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:saloon/common/common.dart';
 import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
 import 'package:saloon/models/user_account.dart';
@@ -38,13 +40,15 @@ class FirebaseDBApi {
     return allSaloons;
   }
 
-  Future<bool> addSalon(Salon saloon) async {
+  FutureEither<Salon> addSalon(Salon saloon) async {
     try {
-      await _db.collection('saloon').add(saloon.toFirestore());
-      return true;
-    } catch (e) {
+      var documentReference =
+          await _db.collection('saloon').add(saloon.toFirestore());
+      var documentSnapshot = await documentReference.get();
+      return Right(Salon.fromFirestore(documentSnapshot));
+    } catch (e, st) {
       log("Error adding saloon: $e");
-      return false;
+      return Left(Failure(message: e.toString(), stackTrace: st));
     }
   }
 

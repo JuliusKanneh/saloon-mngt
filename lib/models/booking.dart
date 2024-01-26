@@ -6,6 +6,7 @@ class Booking {
   String? userId;
   String? saloonId;
   String? gender;
+  String? style;
   DateTime? date;
   TimeOfDay? time;
   String? status;
@@ -15,6 +16,7 @@ class Booking {
     this.userId,
     this.saloonId,
     this.gender,
+    this.style,
     this.date,
     this.time,
     this.status,
@@ -32,7 +34,8 @@ class Booking {
         hour: int.parse(data!['time'].toString().substring(10, 12)),
         minute: int.parse(data['time'].toString().substring(13, 15)),
       ),
-      gender: data['duration'],
+      gender: data['gender'],
+      style: data['style'],
       userId: data['user_id'],
       saloonId: data['saloon_id'],
       status: data['status'],
@@ -46,6 +49,7 @@ class Booking {
       if (userId != null) 'user_id': userId,
       if (saloonId != null) 'saloon_id': saloonId,
       if (gender != null) 'gender': gender,
+      if (style != null) 'style': style,
       if (status != null) 'status': status,
     };
   }
