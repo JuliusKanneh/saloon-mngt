@@ -52,7 +52,7 @@ class AuthApi implements IAuthApi {
 
       // set the user id and role before saving
       user.setId(userCredential.user!.uid);
-      user.setRole(ordinaryUserRole);
+      // user.setRole(ordinaryUserRole);
 
       // save user data
       var saveUserData = await firebaseDBApi.saveUserData(user);

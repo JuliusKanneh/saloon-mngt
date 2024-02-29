@@ -26,6 +26,17 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
   final phoneNumberTextEditingController = TextEditingController();
   final passwordTextEditingController = TextEditingController();
   final confirmPasswordTextEditingController = TextEditingController();
+  String? selectedUserRole;
+  List<String> userRoles = [
+    "user",
+    "manager",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedUserRole = userRoles[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +117,57 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                               const SizedBox(
                                 height: 30,
                               ),
+                              DropdownButtonFormField<String>(
+                                decoration: InputDecoration(
+                                  hintText: "Role",
+                                  hintStyle: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: const BorderSide(
+                                      // color: Colors.blue,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 3.0,
+                                    ),
+                                  ),
+                                ),
+                                // decoration: const InputDecoration(
+                                //   labelText: "Manager",
+                                //   border: OutlineInputBorder(
+                                //     borderRadius:
+                                //         BorderRadius.all(Radius.circular(20)),
+                                //   ),
+                                //   floatingLabelBehavior:
+                                //       FloatingLabelBehavior.never,
+                                // ),
+                                value: userRoles[0],
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    selectedUserRole = value;
+                                  });
+                                },
+                                items: userRoles.map((role) {
+                                  return DropdownMenuItem<String>(
+                                    value: role,
+                                    child: Text(role),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   var isPassMatch = validatePassword(
@@ -128,6 +190,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                                         email: emailTextEditingController.text
                                             .trim(),
                                         photoUrl: "",
+                                        role: selectedUserRole,
                                       ),
                                       password: passwordTextEditingController
                                           .text
