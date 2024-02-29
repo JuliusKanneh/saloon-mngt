@@ -26,38 +26,44 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var firebaseApi = ref.watch(firebaseApiProvider);
     return MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('es', ''),
-        Locale('de', ''),
-      ],
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: checkAuthState(firebaseApi, ref),
-    );
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('es', ''),
+          Locale('de', ''),
+        ],
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: FutureBuilder<Widget>(
+          future: checkAuthState(firebaseApi, ref),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text(
+                  'Error: ${snapshot.error}'); // Show an error message if checkAuthState completed with an error
+            }
+            return snapshot.data!;
+          },
+        ));
   }
 }
 
-Widget checkAuthState(FirebaseApi firebaseApi, WidgetRef ref) {
+Future<Widget> checkAuthState(FirebaseApi firebaseApi, WidgetRef ref) async {
   bool isLogIn = false;
   var currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser != null) {
     // loadUserData(ref, currentUser);
-    ref
-        .watch(firebaseDBApiProvider)
-        .findUserByUid(currentUser.uid)
-        .then((value) {
-      log('value: $value');
-      ref.watch(userAccountProvider).setUser(value);
-    });
+    var userAccount =
+        await ref.watch(firebaseDBApiProvider).findUserByUid(currentUser.uid);
+    ref.watch(userAccountProvider).setUser(userAccount);
     isLogIn = true;
   }
 
