@@ -51,7 +51,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
     Uint8List? image = await pickImage(ImageSource.gallery);
 
     //upload image to storage and save image url to database
-    var downloadUrl = await ref.watch(sotreDataProvider).uploadImageToStorage(
+    var downloadUrl = await ref.watch(storeDataProvider).uploadImageToStorage(
         fileName: salonId, file: image!, folderName: "SalonLogos");
 
     await ref.watch(firebaseDBApiProvider).updateSalonLogoUrl(

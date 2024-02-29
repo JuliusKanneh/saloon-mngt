@@ -60,7 +60,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     });
 
     //upload image to storage and save image url to database
-    var downloadUrl = await ref.watch(sotreDataProvider).uploadImageToStorage(
+    var downloadUrl = await ref.watch(storeDataProvider).uploadImageToStorage(
         fileName: fileName, file: image!, folderName: "salons");
     return downloadUrl;
   }
@@ -277,7 +277,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             }, (r) {
                                               //upload image to storage and save image url to database
                                               ref
-                                                  .watch(sotreDataProvider)
+                                                  .watch(storeDataProvider)
                                                   .uploadImageToStorage(
                                                     fileName: r.id!,
                                                     file: _image!,

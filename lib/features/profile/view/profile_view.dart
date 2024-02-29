@@ -30,7 +30,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     });
 
     //upload image to storage and save image url to database
-    var downloadUrl = await ref.watch(sotreDataProvider).uploadImageToStorage(
+    var downloadUrl = await ref.watch(storeDataProvider).uploadImageToStorage(
         fileName: userId, file: image!, folderName: "ProfilePhotos");
 
     await ref

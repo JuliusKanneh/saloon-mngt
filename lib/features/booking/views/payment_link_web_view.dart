@@ -46,8 +46,7 @@ class _PaymentLinkViewState extends State<PaymentLinkView> {
       ),
     )
     ..loadRequest(
-      Uri.parse(
-          'https://buy.stripe.com/test_fZe7wh7Bq2qyfCwdQV?prefilled_email=$username%40gamil.com'),
+      Uri.parse('https://buy.stripe.com/test_bIY5o9f3S5CKaicdR6'),
     );
 
   @override

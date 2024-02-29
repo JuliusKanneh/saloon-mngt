@@ -240,7 +240,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                     managerName: salonManagerNameController.text.trim(),
                     photoUrl: logoUrl,
                   );
-                  
+
                   // add the saloon
                   var res = await homeController.addSaloon(saloon);
                   res.fold((l) {
@@ -251,7 +251,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                   }, (r) {
                     //upload image to storage and save image url to database
                     ref
-                        .watch(sotreDataProvider)
+                        .watch(storeDataProvider)
                         .uploadImageToStorage(
                           fileName: r.id!,
                           file: _image!,

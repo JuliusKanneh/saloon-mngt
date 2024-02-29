@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-//TODO: get the right colors from the figma and convert them each to dart corresponding colors. note the first 2 digits specify how dark or light the color is with f being the lightest and 0 being the darkest.
 class ColorPalette {
   static const Color lightGreen = Color(0xc677ff6b);
   static const Color lightYellow = Color(0xfffdffca);

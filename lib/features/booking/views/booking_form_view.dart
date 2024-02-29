@@ -96,219 +96,263 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
           title: const Text('Booking'),
           centerTitle: true,
           elevation: 8.0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Container(
             margin: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                    ),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black54,
-                      ),
+                      // color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Date',
-                        suffixIcon: Icon(Icons.calendar_today),
-                        border: InputBorder.none,
-                      ),
-                      onTap: () => _showDatePicker(context),
-                      readOnly: true,
-                      controller: TextEditingController(
-                        text: selectedDate != null
-                            ? selectedDate.toString()
-                            : 'No date selected',
-                      ),
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            value == 'No date selected') {
-                          return 'Please select a date';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black54,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Time',
-                        border: InputBorder.none,
-                      ),
-                      onTap: () => _showTimePicker(context),
-                      readOnly: true,
-                      controller: TextEditingController(
-                        text: selectedTime != null
-                            ? selectedTime!.format(context)
-                            : 'No time selected',
-                      ),
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            value == 'No time selected') {
-                          return 'Please select a date';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black54,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Gender',
-                        border: InputBorder.none,
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'male',
-                          child: Text('Male'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${widget.saloon!.name}",
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
-                        DropdownMenuItem(
-                          value: 'female',
-                          child: Text('Female'),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: IconButton(
+                            color: Colors.red,
+                            onPressed: () {
+                              /// Open google map to show the location of the saloon
+                            },
+                            icon: const Icon(Icons.location_on),
+                          ),
                         ),
-                        // DropdownMenuItem(
-                        //   value: 'Other',
-                        //   child: Text('Other'),
-                        // ),
                       ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a gender';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        log("value: $value");
-                        setState(() {
-                          gender = value;
-                          selectedGender = value!;
-                          updateStyleDropdown();
-                        });
-                      },
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black54,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Date',
+                              suffixIcon: Icon(Icons.calendar_today),
+                              border: InputBorder.none,
+                            ),
+                            onTap: () => _showDatePicker(context),
+                            readOnly: true,
+                            controller: TextEditingController(
+                              text: selectedDate != null
+                                  ? selectedDate.toString()
+                                  : 'No date selected',
+                            ),
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value == 'No date selected') {
+                                return 'Please select a date';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black54,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Time',
+                              border: InputBorder.none,
+                            ),
+                            onTap: () => _showTimePicker(context),
+                            readOnly: true,
+                            controller: TextEditingController(
+                              text: selectedTime != null
+                                  ? selectedTime!.format(context)
+                                  : 'No time selected',
+                            ),
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value == 'No time selected') {
+                                return 'Please select a date';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black54,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                              labelText: 'Gender',
+                              border: InputBorder.none,
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'male',
+                                child: Text('Male'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'female',
+                                child: Text('Female'),
+                              ),
+                              // DropdownMenuItem(
+                              //   value: 'Other',
+                              //   child: Text('Other'),
+                              // ),
+                            ],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a gender';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              log("value: $value");
+                              setState(() {
+                                gender = value;
+                                selectedGender = value!;
+                                updateStyleDropdown();
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black54,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DropdownButtonFormField<String>(
+                            value: currentStyles.isNotEmpty
+                                ? currentStyles[0]
+                                : null,
+                            decoration: const InputDecoration(
+                              labelText: 'Style',
+                              border: InputBorder.none,
+                            ),
+                            items: currentStyles.map((String style) {
+                              return DropdownMenuItem<String>(
+                                value: style,
+                                child: Text(style),
+                              );
+                            }).toList(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a date';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                style = value;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // var date = selectedDate != null
+                            //     ? selectedDate!.toString().split(' ')[0]
+                            //     : 'No date selected';
+                            // var time = selectedTime != null
+                            //     ? selectedTime!.format(context)
+                            //     : 'No time selected';
+
+                            // log('Time: ${selectedTime.toString().substring(10, 15)}');
+
+                            // log('Date: ${date.toString().split(' ')[0]}');
+                            // log('Time: ${time.toString().split(' ')[0]}');
+                            // log('Gender: $gender');
+
+                            Booking booking = Booking(
+                              userId: ref.watch(userAccountProvider).user!.id,
+                              saloonId: widget.saloon!.id,
+                              date: selectedDate,
+                              time: selectedTime,
+                              gender: gender,
+                              style: style,
+                              status: 'Pending',
+                            );
+
+                            log('Booking: ${booking.toFirestore()}');
+
+                            // check if the form is valid
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            // save booking to database
+                            isLoading = true;
+
+                            await ref
+                                .watch(bookingControllerProvider.notifier)
+                                .book(booking, context);
+
+                            isLoading = false;
+                            routeToBookingSuccess();
+                          },
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text('Book Now'),
+                        ),
+                      ],
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black54,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: currentStyles.isNotEmpty ? currentStyles[0] : null,
-                      decoration: const InputDecoration(
-                        labelText: 'Style',
-                        border: InputBorder.none,
-                      ),
-                      items: currentStyles.map((String style) {
-                        return DropdownMenuItem<String>(
-                          value: style,
-                          child: Text(style),
-                        );
-                      }).toList(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a date';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        setState(() {
-                          style = value;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // var date = selectedDate != null
-                      //     ? selectedDate!.toString().split(' ')[0]
-                      //     : 'No date selected';
-                      // var time = selectedTime != null
-                      //     ? selectedTime!.format(context)
-                      //     : 'No time selected';
-
-                      // log('Time: ${selectedTime.toString().substring(10, 15)}');
-
-                      // log('Date: ${date.toString().split(' ')[0]}');
-                      // log('Time: ${time.toString().split(' ')[0]}');
-                      // log('Gender: $gender');
-
-                      Booking booking = Booking(
-                        userId: ref.watch(userAccountProvider).user!.id,
-                        saloonId: widget.saloon!.id,
-                        date: selectedDate,
-                        time: selectedTime,
-                        gender: gender,
-                        style: style,
-                        status: 'Pending',
-                      );
-
-                      log('Booking: ${booking.toFirestore()}');
-
-                      // check if the form is valid
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-
-                      // save booking to database
-                      isLoading = true;
-
-                      await ref
-                          .watch(bookingControllerProvider.notifier)
-                          .book(booking, context);
-
-                      isLoading = false;
-                      routeToBookingSuccess();
-                    },
-                    child: isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Book Now'),
                   ),
                 ],
               ),
