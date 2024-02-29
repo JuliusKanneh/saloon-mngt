@@ -94,7 +94,8 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                   shape: BoxShape.circle,
                 ),
                 child: ClipOval(
-                  child: (widget.saloon.photoUrl == null)
+                  child: (widget.saloon.photoUrl == null ||
+                          widget.saloon.photoUrl!.isEmpty)
                       ? Image.asset(
                           "assets/banner.jpg",
                           fit: BoxFit.cover,
@@ -106,6 +107,12 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                             return progress == null
                                 ? child
                                 : const CircularProgressIndicator();
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/banner.jpg",
+                              fit: BoxFit.cover,
+                            );
                           },
                         ),
                 ),
