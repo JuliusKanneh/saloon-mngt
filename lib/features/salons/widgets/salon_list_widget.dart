@@ -221,12 +221,22 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                       ],
                     )
                   : IconButton(
-                      onPressed: () {
-                        //TODO: Add to favorites.
+                      onPressed: () async {
+                        await salonController.toggleFavorite(
+                          salonId: widget.saloon.id!,
+                          isFavorite: !widget.saloon.isFavorite!,
+                        );
+                        refreshMainWidget();
                       },
-                      icon: const Icon(
-                        Icons.favorite_border,
-                      ),
+                      icon: widget.saloon.isFavorite!
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.favorite_border,
+                              color: Colors.red,
+                            ),
                     ),
             ],
           ),
@@ -250,25 +260,18 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
         ),
         actions: [
           TextButton(
-              onPressed: () {
-                /// navigate back to the home screen to get a fresh list of saloons
-                Navigator.pop(context);
-                Navigator.of(context).push(DashboardView.route(
-                  dbApi: ref.read(firebaseDBApiProvider),
-                ));
-              },
-              child: const Text('Ok'))
+            onPressed: () {
+              /// navigate back to the home screen to get a fresh list of saloons
+              Navigator.pop(context);
+              Navigator.of(context).push(DashboardView.route(
+                dbApi: ref.read(firebaseDBApiProvider),
+              ));
+            },
+            child: const Text('Ok'),
+          )
         ],
       ),
     );
-    // showAlertDialog(
-    //   title: isSaved ? "Success" : "Failure",
-    //   content: isSaved
-    //       ? "Saloon added successfully"
-    //       : "Failed to add saloon! Please try again. If it persists, contact support.",
-    //   context: context,
-    //   ref: ref,
-    // );
   }
 
   Future<dynamic> showSalonForm(
@@ -379,6 +382,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
 
                   // add the saloon
                   var isSaved = await homeController.editSalon(saloon);
+                  log("isSaved: $isSaved");
                   setState(() {
                     addSalonLoading = false;
                   });

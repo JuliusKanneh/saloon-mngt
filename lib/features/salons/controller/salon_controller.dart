@@ -30,4 +30,13 @@ class SalonController extends StateNotifier<bool> {
     log("deleteSalon: $id");
     await _dbApi.deleteSalon(id);
   }
+
+  Future<void> toggleFavorite(
+      {required String salonId, required bool isFavorite}) async {
+    log("toggleFavorite: $salonId | $isFavorite");
+    await _dbApi.updateSalonIsFavorite(
+      isFavorite: isFavorite,
+      salonId: salonId,
+    );
+  }
 }

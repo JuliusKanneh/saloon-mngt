@@ -8,7 +8,6 @@ import 'package:saloon/apis/firebase_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/models/user_account.dart';
 import 'package:saloon/providers/user_account_provider.dart';
-import 'package:saloon/constants/constants.dart';
 
 abstract class IAuthApi {
   FutureEither<UserCredential> register({

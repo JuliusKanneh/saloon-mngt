@@ -15,6 +15,7 @@ final firebaseDBApiProvider = Provider((ref) {
 class FirebaseDBApi {
   final FirebaseFirestore _db;
   List<Salon> allSaloons = [];
+  List<Salon> favoriteSaloons = [];
   List<Booking> allBookings = [];
 
   FirebaseDBApi() : _db = FirebaseFirestore.instance;
@@ -38,6 +39,24 @@ class FirebaseDBApi {
     log('all rsvps: $allSaloons');
 
     return allSaloons;
+  }
+
+  Future<List<Salon>> getFavoriteSaloons() async {
+    favoriteSaloons.clear();
+    var querySnapshot = await _db
+        .collection('saloon')
+        .where("is_favorite", isEqualTo: true)
+        .get();
+    log('response: ${querySnapshot.docs}');
+
+    for (var saloon in querySnapshot.docs) {
+      log('Favorite saloon ${saloon.id}: $saloon');
+      favoriteSaloons.add(Salon.fromFirestore(saloon));
+    }
+
+    log('all rsvps: $allSaloons');
+
+    return favoriteSaloons;
   }
 
   FutureEither<Salon> addSalon(Salon saloon) async {
@@ -82,6 +101,16 @@ class FirebaseDBApi {
   }) async {
     log("updateSalonLogoUrl: $photoUrl, $salonId");
     await _db.collection('saloon').doc(salonId).update({"photo_url": photoUrl});
+  }
+
+  Future<void> updateSalonIsFavorite({
+    required bool isFavorite,
+    required String salonId,
+  }) async {
+    log("updateSalonIsFavorite: $isFavorite, $salonId");
+    await _db.collection('saloon').doc(salonId).update(
+      {"is_favorite": isFavorite},
+    );
   }
   // >>>>>>>>>>>> Salon Ends here >>>>>>>>>>>>
 

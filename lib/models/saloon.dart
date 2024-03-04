@@ -7,6 +7,7 @@ class Salon {
   final String? contact;
   final String? managerName;
   final String? photoUrl;
+  final bool? isFavorite;
 
   Salon({
     this.id,
@@ -15,6 +16,7 @@ class Salon {
     this.contact,
     this.managerName,
     this.photoUrl,
+    this.isFavorite = false,
   });
 
   factory Salon.fromFirestore(
@@ -29,6 +31,7 @@ class Salon {
       managerName: data?['manager_name'],
       name: data?['name'],
       contact: data?['contact'],
+      isFavorite: data?['is_favorite'],
     );
   }
 
@@ -39,6 +42,7 @@ class Salon {
       if (photoUrl != null) "photo_url": photoUrl,
       if (managerName != null) "manager_name": managerName,
       if (contact != null) "contact": contact,
+      if (isFavorite != null) "is_favorite": isFavorite,
     };
   }
 
@@ -51,6 +55,7 @@ class Salon {
       if (photoUrl != null) "photo_url": photoUrl,
       if (managerName != null) "manager_name": managerName,
       if (contact != null) "contact": contact,
+      if (isFavorite != null) "is_favorite": isFavorite,
     };
   }
 }

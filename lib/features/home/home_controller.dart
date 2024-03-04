@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/common/common.dart';

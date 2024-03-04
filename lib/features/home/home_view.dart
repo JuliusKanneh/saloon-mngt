@@ -10,7 +10,6 @@ import 'package:saloon/apis/storage_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
 import 'package:saloon/features/home/home_controller.dart';
-import 'package:saloon/features/home/widgets/favorites_card.dart';
 import 'package:saloon/features/home/widgets/salon_card.dart';
 import 'package:saloon/constants/constants.dart';
 import 'package:saloon/models/saloon.dart';
@@ -45,12 +44,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   bool addSalonLoading = false;
 
-  late Future<List<Salon>> saloonFuture;
+  late Future<List<Salon>> saloonsFuture;
+  late Future<List<Salon>> favoriteSaloonsFuture;
   Uint8List? _image;
 
   Future<List<Salon>> _getAllSaloons() {
     var saloonFuture = widget.dbApi.getAllSaloons();
     return saloonFuture;
+  }
+
+  Future<List<Salon>> _getFavoriteSaloons() {
+    var favoriteSaloonFuture = widget.dbApi.getFavoriteSaloons();
+    return favoriteSaloonFuture;
   }
 
   Future<String> uploadSalonLogo(String fileName) async {
@@ -68,7 +73,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
-    saloonFuture = _getAllSaloons();
+    saloonsFuture = _getAllSaloons();
+    favoriteSaloonsFuture = _getFavoriteSaloons();
   }
 
   @override
@@ -114,22 +120,28 @@ class _HomeViewState extends ConsumerState<HomeView> {
           // centerTitle: true,
         ),
         body: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Row(
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
                       children: [
                         Row(
                           children: [
-                            Icon(LineIcons.search),
-                            SizedBox(
+                            IconButton(
+                              onPressed: () {
+                                // show the search field to search for saloons
+                                // implement search and display suggestions as user types
+                              },
+                              icon: const Icon(LineIcons.search),
+                            ),
+                            const SizedBox(
                               width: 5,
                             ),
-                            Text('Search'),
+                            const Text('Search'),
                           ],
                         ),
                       ],
@@ -315,30 +327,72 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ),
                   ],
                 ),
-                regularVerticalSpacing(),
-                Row(
+              ),
+              regularVerticalSpacing(),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Favorites'),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text('View All'),
-                    ),
+                    Text('Favorites'),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.of(context).push(
+                    //       DashboardView.route(
+                    //         index: 6,
+                    //         dbApi: ref.read(firebaseDBApiProvider),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: const Text('View All'),
+                    // ),
                   ],
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 30,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (int i = 0; i < 8; i++) const FavoritesCard(),
-                      ],
-                    ),
-                  ),
-                ),
-                regularVerticalSpacing(),
-                Row(
+              ),
+              regularVerticalSpacing(),
+              FutureBuilder(
+                future: favoriteSaloonsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return snapshot.data != null
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var saloon in snapshot.data!)
+                                    SaloonCard(
+                                      saloon: saloon,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: const Text('No Data'),
+                          );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+              // SizedBox(
+              //   width: MediaQuery.of(context).size.width - 30,
+              //   child: SingleChildScrollView(
+              //     scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       children: [
+              //         for (int i = 0; i < 8; i++) const FavoritesCard(),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              regularVerticalSpacing(),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('All'),
@@ -355,38 +409,37 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     ),
                   ],
                 ),
+              ),
 
-                // Add a FutureBuilder here
-                FutureBuilder(
-                  future: saloonFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return snapshot.data != null
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width - 30,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (var saloon in snapshot.data!)
-                                      SaloonCard(
-                                        saloon: saloon,
-                                      ),
-                                  ],
-                                ),
+              FutureBuilder(
+                future: saloonsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return snapshot.data != null
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var saloon in snapshot.data!)
+                                    SaloonCard(
+                                      saloon: saloon,
+                                    ),
+                                ],
                               ),
-                            )
-                          : SizedBox(
-                              width: MediaQuery.of(context).size.width - 30,
-                              child: const Text('No Data'),
-                            );
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-              ],
-            ),
+                            ),
+                          )
+                        : SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            child: const Text('No Data'),
+                          );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),
