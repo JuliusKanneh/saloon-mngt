@@ -32,23 +32,21 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                 SizedBox(
                   width: 147,
                   height: 120,
-                  child: Image.asset(
-                    'assets/moriah.jpg',
-                    fit: BoxFit.fill,
+                  child: Image.network(
+                    widget.saloon.photoUrl!,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      return progress == null
+                          ? child
+                          : const LinearProgressIndicator();
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "assets/banner.jpg",
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
-
-                  //TODO: fix this
-                  // child: Image.network(
-                  //   widget.saloon.photoUrl ?? 'NULL',
-                  //   fit: BoxFit.fill,
-                  //   loadingBuilder: (context, child, loadingProgress) {
-                  //     log('Progress: $loadingProgress');
-                  //     if (loadingProgress == null) return child;
-                  //     return const Center(
-                  //       child: CircularProgressIndicator(),
-                  //     );
-                  //   },
-                  // ),
                 ),
               ],
             ),
@@ -61,7 +59,7 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                 children: [
                   Text(
                     widget.saloon.name ?? 'NULL',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black87,
                       fontWeight: FontWeight.bold,
@@ -69,14 +67,14 @@ class _SaloonCard extends ConsumerState<SaloonCard> {
                   ),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         LineIcons.directions,
                         size: 14,
                         color: Colors.black54,
                       ),
                       Text(
                         widget.saloon.address ?? 'NULL',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black54,
                         ),

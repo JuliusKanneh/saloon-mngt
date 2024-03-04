@@ -344,10 +344,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     const Text('All'),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(DashboardView.route(
-                          index: 6,
-                          dbApi: ref.read(firebaseDBApiProvider),
-                        ));
+                        Navigator.of(context).push(
+                          DashboardView.route(
+                            index: 6,
+                            dbApi: ref.read(firebaseDBApiProvider),
+                          ),
+                        );
                       },
                       child: const Text('View All'),
                     ),
