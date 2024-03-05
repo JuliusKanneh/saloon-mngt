@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saloon/constants/constants.dart';
+import 'package:saloon/features/salons/controller/salon_controller.dart';
+import 'package:saloon/features/stylists/views/stylists_widgets.dart';
+import 'package:saloon/providers/user_account_provider.dart';
 
+//TODO: rename this widget
 class NotificationView extends ConsumerStatefulWidget {
-  const NotificationView({super.key});
+  final SalonController salonController;
+  const NotificationView({super.key, required this.salonController});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -10,40 +16,57 @@ class NotificationView extends ConsumerStatefulWidget {
 }
 
 class _NotificationViewState extends ConsumerState<NotificationView> {
+  late Future<List<String>> maleStylistFuture;
+  late Future<List<String>> femaleStylistFuture;
+
+  Future<List<String>> _getMaleStylist() {
+    var maleStylistFuture = widget.salonController.getMaleStylists();
+    return maleStylistFuture;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    maleStylistFuture = _getMaleStylist();
+  }
+
   @override
   Widget build(BuildContext context) {
+    var currentUser = ref.watch(userAccountProvider).getUser();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Notifications'),
-          centerTitle: true,
-          elevation: 2,
-          // backgroundColor: Colors.grey.shade100,
-        ),
-        body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(
-                Icons.notifications,
-                size: 100,
-                color: Colors.grey,
+      home: currentUser!.role != managerUserRole
+          ? Scaffold(
+              appBar: AppBar(
+                title: const Text('Notifications'),
+                centerTitle: true,
+                elevation: 2,
+                // backgroundColor: Colors.grey.shade100,
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                'No notifications yet',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
+              body: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.notifications,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'No notifications yet',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : StylistsWidget(maleStylistFuture: maleStylistFuture),
     );
   }
 }

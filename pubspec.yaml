@@ -55,6 +55,7 @@ dependencies:
   image_picker: ^1.0.7
   firebase_storage: ^11.6.0
   google_maps_flutter: ^2.5.3
+  animated_button_bar: ^1.0.0
 
 dev_dependencies:
   flutter_test:

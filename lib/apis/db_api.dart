@@ -15,6 +15,8 @@ final firebaseDBApiProvider = Provider((ref) {
 class FirebaseDBApi {
   final FirebaseFirestore _db;
   List<Salon> allSaloons = [];
+  List<String> maleStylists = [];
+  List<String> femaleStylists = [];
   List<Salon> favoriteSaloons = [];
   List<Booking> allBookings = [];
 
@@ -39,6 +41,27 @@ class FirebaseDBApi {
     log('all rsvps: $allSaloons');
 
     return allSaloons;
+  }
+
+  Future<List<String>> getMaleStylistsBySalonId({required String id}) async {
+    maleStylists.clear();
+    var docSnapshot = await _db.collection('saloon').doc(id).get();
+    Salon salon = Salon.fromFirestore(docSnapshot);
+    maleStylists = salon.maleStylists!;
+    log('Male Stylists: ${salon.maleStylists}');
+
+    return maleStylists;
+  }
+
+  Future<List<String>> getFemaleStylistsBySalonId({required String id}) async {
+    femaleStylists.clear();
+    var docSnapshot = await _db.collection('saloon').doc(id).get();
+    Salon salon = Salon.fromFirestore(docSnapshot);
+    femaleStylists = salon.femaleStylists!;
+    log('Female Stylists: ${salon.name}');
+    log('Female Stylists: ${salon.femaleStylists}');
+
+    return femaleStylists;
   }
 
   Future<List<Salon>> getFavoriteSaloons() async {
@@ -67,6 +90,28 @@ class FirebaseDBApi {
       return Right(Salon.fromFirestore(documentSnapshot));
     } catch (e, st) {
       log("Error adding saloon: $e");
+      return Left(Failure(message: e.toString(), stackTrace: st));
+    }
+  }
+
+  FutureEither<void> addStylistToSalon({
+    required String salonId,
+    required String name,
+    required String gender,
+  }) async {
+    try {
+      if (gender == "male") {
+        await _db.collection('saloon').doc(salonId).update({
+          "male_stylists": FieldValue.arrayUnion([name]),
+        });
+      } else {
+        await _db.collection('saloon').doc(salonId).update({
+          "female_stylists": FieldValue.arrayUnion([name]),
+        });
+      }
+      return const Right(null);
+    } catch (e, st) {
+      log("Error adding saloon: $e, $st");
       return Left(Failure(message: e.toString(), stackTrace: st));
     }
   }

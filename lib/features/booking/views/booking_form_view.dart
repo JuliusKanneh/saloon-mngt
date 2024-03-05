@@ -303,6 +303,46 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                           ),
                         ),
                         const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black54,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DropdownButtonFormField<String>(
+                            value: currentStyles.isNotEmpty
+                                ? currentStyles[0]
+                                : null,
+                            decoration: const InputDecoration(
+                              labelText: 'Style',
+                              border: InputBorder.none,
+                            ),
+                            items: currentStyles.map((String style) {
+                              return DropdownMenuItem<String>(
+                                value: style,
+                                child: Text(style),
+                              );
+                            }).toList(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a date';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                style = value;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(
                           height: 40,
                         ),
                         ElevatedButton(

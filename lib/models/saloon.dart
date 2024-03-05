@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Salon {
@@ -8,6 +10,8 @@ class Salon {
   final String? managerName;
   final String? photoUrl;
   final bool? isFavorite;
+  final List<String>? maleStylists;
+  final List<String>? femaleStylists;
 
   Salon({
     this.id,
@@ -17,6 +21,8 @@ class Salon {
     this.managerName,
     this.photoUrl,
     this.isFavorite = false,
+    this.maleStylists,
+    this.femaleStylists,
   });
 
   factory Salon.fromFirestore(
@@ -32,6 +38,8 @@ class Salon {
       name: data?['name'],
       contact: data?['contact'],
       isFavorite: data?['is_favorite'],
+      maleStylists: List<String>.from(data?['male_stylists'] ?? []),
+      femaleStylists: List<String>.from(data?['female_stylits'] ?? []),
     );
   }
 
@@ -43,6 +51,8 @@ class Salon {
       if (managerName != null) "manager_name": managerName,
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
+      if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),
+      if (femaleStylists != null) "female_stylits": jsonEncode(femaleStylists),
     };
   }
 
@@ -56,6 +66,8 @@ class Salon {
       if (managerName != null) "manager_name": managerName,
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
+      if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),
+      if (femaleStylists != null) "female_stylits": jsonEncode(femaleStylists),
     };
   }
 }

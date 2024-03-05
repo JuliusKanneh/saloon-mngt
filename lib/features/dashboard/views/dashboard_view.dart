@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:saloon/apis/db_api.dart';
+import 'package:saloon/constants/constants.dart';
 import 'package:saloon/features/booking/controllers/booking_controller.dart';
 import 'package:saloon/features/booking/views/booking_history_view.dart';
 import 'package:saloon/features/booking/views/booking_form_view.dart';
@@ -14,6 +15,7 @@ import 'package:saloon/features/notification/view/notification_view.dart';
 import 'package:saloon/features/profile/view/profile_view.dart';
 import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
+import 'package:saloon/providers/user_account_provider.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   final int? selectedIndex;
@@ -67,7 +69,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       BookingHistoryView(
         bookingController: ref.read(bookingControllerProvider.notifier),
       ),
-      const NotificationView(),
+      NotificationView(
+          salonController: ref.read(salonControllerProvider.notifier)),
       BookingFormView(
         saloon: widget.saloon,
       ),
@@ -85,6 +88,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    var currentUser = ref.watch(userAccountProvider).getUser();
+
     return SafeArea(
       child: Scaffold(
         body: _widgetOptions[_selectedIndex],
@@ -113,19 +118,24 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 duration: const Duration(milliseconds: 400),
                 tabBackgroundColor: Colors.grey[100]!,
                 color: Colors.black, // navigation bar padding,
-                tabs: const [
-                  GButton(
+                tabs: [
+                  const GButton(
                     icon: LineIcons.home,
                     text: 'Home',
                   ),
-                  GButton(
+                  const GButton(
                     icon: LineIcons.save,
                     text: 'Bookings',
                   ),
-                  GButton(
-                    icon: Icons.notifications_none_outlined,
-                    text: 'Notifications',
-                  ),
+                  currentUser!.role! != managerUserRole
+                      ? const GButton(
+                          icon: Icons.notifications_none_outlined,
+                          text: 'Notifications',
+                        )
+                      : const GButton(
+                          icon: LineIcons.scissorsHand,
+                          text: 'Stylists',
+                        ),
                 ],
                 selectedIndex: _selectedIndex,
                 onTabChange: (index) {

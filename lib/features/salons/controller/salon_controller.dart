@@ -20,9 +20,31 @@ class SalonController extends StateNotifier<bool> {
     return await _dbApi.getAllSaloons();
   }
 
+  Future<List<String>> getMaleStylists() async {
+    //TODO: work on assigning a salon to a manager and update this salon id to work dynamically.
+    return await _dbApi.getMaleStylistsBySalonId(id: "6jv2XDSKAAAus0Xzu7zT");
+  }
+
+  Future<List<String>> getFemaleStylists() async {
+    //TODO: work on assigning a salon to a manager and update this salon id to work dynamically.
+    return await _dbApi.getFemaleStylistsBySalonId(id: "6jv2XDSKAAAus0Xzu7zT");
+  }
+
   FutureEither<Salon> addSaloon(Salon saloon) async {
     log("addSaloon: $saloon");
     return await _dbApi.addSalon(saloon);
+  }
+
+  FutureEither<void> addStylistToSalon({
+    required String salonId,
+    required String name,
+    required String gender,
+  }) async {
+    return await _dbApi.addStylistToSalon(
+      salonId: salonId,
+      name: name,
+      gender: gender,
+    );
   }
 
   // delete booking
