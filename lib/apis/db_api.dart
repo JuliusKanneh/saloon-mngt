@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:saloon/common/common.dart';
@@ -49,6 +50,81 @@ class FirebaseDBApi {
     Salon salon = Salon.fromFirestore(docSnapshot);
     maleStylists = salon.maleStylists!;
     log('Male Stylists: ${salon.maleStylists}');
+
+    return maleStylists;
+  }
+
+  // Future<List<String>> getAvailableMaleStylists({
+  //   required String salonId,
+  //   required DateTime date,
+  //   required TimeOfDay time,
+  // }) async {
+  //   maleStylists.clear();
+  //   var docSnapshot = await _db.collection('saloon').doc(salonId).get();
+  //   Salon salon = Salon.fromFirestore(docSnapshot);
+  //   maleStylists = salon.maleStylists!;
+  //   log('Male Stylists: ${salon.maleStylists}');
+  //   log("date: ${date.toString().split(" ")[0]}");
+
+  //   DateTime dateTime =
+  //       DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  //   final cutoffTime = dateTime.subtract(const Duration(minutes: 45));
+  //   log('cutoffTime: $cutoffTime');
+
+  //   var querySnapshot = await _db
+  //       .collection('booking')
+  //       .where("saloon_id", isEqualTo: salonId)
+  //       .where("date", isEqualTo: date.toString().split(" ")[0])
+  //       // where time is less than 45 minutes from a given time
+  //       .where("time", isGreaterThanOrEqualTo: cutoffTime)
+  //       .get();
+
+  //   log('response: ${querySnapshot.docs}');
+
+  //   return maleStylists;
+  // }
+
+  Future<List<String>> getAvailableMaleStylists({
+    required String salonId,
+    required DateTime date,
+    required TimeOfDay time,
+  }) async {
+    maleStylists.clear();
+    var docSnapshot = await _db.collection('saloon').doc(salonId).get();
+    Salon salon = Salon.fromFirestore(docSnapshot);
+    maleStylists = salon.maleStylists!;
+    log('Male Stylists: ${salon.maleStylists}');
+    log("date: ${date.toString().split(" ")[0]}");
+
+    TimeOfDay cutoffTime = TimeOfDay(hour: time.hour, minute: time.minute - 45);
+    log('cutoffTime: $cutoffTime');
+
+    var querySnapshot = await _db
+        .collection('booking')
+        .where("saloon_id", isEqualTo: salonId)
+        .where("date", isEqualTo: date.toString().split(" ")[0])
+        .get();
+
+    log('response: ${querySnapshot.docs}');
+
+    List<String> bookedStylists = [];
+
+    for (var doc in querySnapshot.docs) {
+      final timeString = doc['time']; // e.g., "TimeOfDay(13:00)"
+      final timeParts =
+          timeString.substring(10, timeString.length - 1).split(':');
+      final bookingTime = TimeOfDay(
+          hour: int.parse(timeParts[0]), minute: int.parse(timeParts[1]));
+
+      if (bookingTime.hour > cutoffTime.hour ||
+          (bookingTime.hour == cutoffTime.hour &&
+              bookingTime.minute > cutoffTime.minute)) {
+        bookedStylists.add(doc['stylist']);
+      }
+    }
+
+    // Remove booked stylists from maleStylists
+    maleStylists.removeWhere((stylist) => bookedStylists.contains(stylist));
 
     return maleStylists;
   }

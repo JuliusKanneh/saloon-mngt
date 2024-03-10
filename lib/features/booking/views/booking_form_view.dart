@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/features/booking/controllers/booking_controller.dart';
 import 'package:saloon/features/dashboard/views/dashboard_view.dart';
+import 'package:saloon/features/salons/controller/salon_controller.dart';
 import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
 import 'package:saloon/providers/user_account_provider.dart';
@@ -27,16 +28,23 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
   TimeOfDay? selectedTime;
   String? gender;
   String? style;
+  String? stylist;
   bool isLoading = false;
 
   String selectedGender = 'male';
-  List<String> maleStyles = ['Male Style 1', 'Male Style 2', 'Male Style 3'];
+  List<String> maleStyles = [
+    'Male Style 1',
+    'Male Style 2',
+    'Male Style 3',
+  ];
   List<String> femaleStyles = [
     'Female Style 1',
     'Female Style 2',
     'Female Style 3'
   ];
   List<String> currentStyles = [];
+  List<String> maleStylists = [];
+  List<String> femaleStylists = [];
 
   void _showDatePicker(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -257,7 +265,7 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                               setState(() {
                                 gender = value;
                                 selectedGender = value!;
-                                updateStyleDropdown();
+                                updateStyleAndStylistDropdown();
                               });
                             },
                           ),
@@ -316,28 +324,39 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: DropdownButtonFormField<String>(
-                            value: currentStyles.isNotEmpty
-                                ? currentStyles[0]
-                                : null,
+                            value: gender == "male"
+                                ? maleStylists.isNotEmpty
+                                    ? maleStylists[0]
+                                    : null
+                                : femaleStylists.isNotEmpty
+                                    ? femaleStylists[0]
+                                    : null,
                             decoration: const InputDecoration(
-                              labelText: 'Style',
+                              labelText: 'Stylist',
                               border: InputBorder.none,
                             ),
-                            items: currentStyles.map((String style) {
-                              return DropdownMenuItem<String>(
-                                value: style,
-                                child: Text(style),
-                              );
-                            }).toList(),
+                            items: gender == "male"
+                                ? maleStylists.map((String stylist) {
+                                    return DropdownMenuItem<String>(
+                                      value: stylist,
+                                      child: Text(stylist),
+                                    );
+                                  }).toList()
+                                : femaleStylists.map((String stylist) {
+                                    return DropdownMenuItem<String>(
+                                      value: stylist,
+                                      child: Text(stylist),
+                                    );
+                                  }).toList(),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please select a date';
+                                return 'Please select a stylist';
                               }
                               return null;
                             },
                             onChanged: (value) {
                               setState(() {
-                                style = value;
+                                stylist = value;
                               });
                             },
                           ),
@@ -368,6 +387,7 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
                               gender: gender,
                               style: style,
                               status: 'Pending',
+                              stylist: stylist,
                             );
 
                             log('Booking: ${booking.toFirestore()}');
@@ -403,14 +423,31 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
     );
   }
 
-  void updateStyleDropdown() {
-    setState(() {
-      if (selectedGender == 'male') {
+  void updateStyleAndStylistDropdown() async {
+    if (selectedGender == 'male') {
+      // TODO: get the list of male stylist from the database that are available for booking base
+      var mStylelists = await ref
+          .watch(salonControllerProvider.notifier)
+          .getAvailableMaleStylists(
+            salonId: widget.saloon!.id!,
+            date: selectedDate!,
+            time: selectedTime!,
+          );
+
+      setState(() {
         currentStyles = List.from(maleStyles);
-      } else if (selectedGender == 'female') {
+        maleStylists = mStylelists;
+      });
+    } else if (selectedGender == 'female') {
+      var fStylelists = await ref
+          .watch(salonControllerProvider.notifier)
+          .getFemaleStylists(salonId: widget.saloon!.id!);
+      log('fStylelists: $fStylelists');
+      setState(() {
         currentStyles = List.from(femaleStyles);
-      }
-    });
+        femaleStylists = fStylelists;
+      });
+    }
   }
 
   void routeToBookingSuccess() {

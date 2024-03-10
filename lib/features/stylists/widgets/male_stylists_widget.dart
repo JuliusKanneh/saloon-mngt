@@ -19,7 +19,7 @@ class _MaleStyistsWidgetState extends ConsumerState<MaleStyistsWidget> {
   late Future<List<String>> maleStylistFuture;
 
   Future<List<String>> _getMaleStylist() {
-    var maleStylistFuture = widget.salonController.getMaleStylists();
+    var maleStylistFuture = widget.salonController.getMaleStylists(salonId: "6jv2XDSKAAAus0Xzu7zT");
     return maleStylistFuture;
   }
 

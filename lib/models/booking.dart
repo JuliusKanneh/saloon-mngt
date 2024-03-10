@@ -10,6 +10,7 @@ class Booking {
   DateTime? date;
   TimeOfDay? time;
   String? status;
+  String? stylist;
 
   Booking({
     this.id,
@@ -20,6 +21,7 @@ class Booking {
     this.date,
     this.time,
     this.status,
+    this.stylist,
   });
 
   factory Booking.fromFirestore(
@@ -39,6 +41,7 @@ class Booking {
       userId: data['user_id'],
       saloonId: data['saloon_id'],
       status: data['status'],
+      stylist: data['stylist'],
     );
   }
 
@@ -51,6 +54,7 @@ class Booking {
       if (gender != null) 'gender': gender,
       if (style != null) 'style': style,
       if (status != null) 'status': status,
+      if (stylist != null) 'stylist': stylist,
     };
   }
 }
