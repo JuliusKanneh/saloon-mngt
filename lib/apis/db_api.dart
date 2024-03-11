@@ -132,9 +132,10 @@ class FirebaseDBApi {
   Future<List<String>> getFemaleStylistsBySalonId({required String id}) async {
     femaleStylists.clear();
     var docSnapshot = await _db.collection('saloon').doc(id).get();
+    log('response: ${docSnapshot.data()!['female_stylists']}');
     Salon salon = Salon.fromFirestore(docSnapshot);
     femaleStylists = salon.femaleStylists!;
-    log('Female Stylists: ${salon.name}');
+    log('Slon name: ${salon.name}');
     log('Female Stylists: ${salon.femaleStylists}');
 
     return femaleStylists;

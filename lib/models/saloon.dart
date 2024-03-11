@@ -39,7 +39,7 @@ class Salon {
       contact: data?['contact'],
       isFavorite: data?['is_favorite'],
       maleStylists: List<String>.from(data?['male_stylists'] ?? []),
-      femaleStylists: List<String>.from(data?['female_stylits'] ?? []),
+      femaleStylists: List<String>.from(data?['female_stylists'] ?? []),
     );
   }
 
@@ -52,7 +52,7 @@ class Salon {
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
       if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),
-      if (femaleStylists != null) "female_stylits": jsonEncode(femaleStylists),
+      if (femaleStylists != null) "female_stylists": jsonEncode(femaleStylists),
     };
   }
 
@@ -67,7 +67,7 @@ class Salon {
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
       if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),
-      if (femaleStylists != null) "female_stylits": jsonEncode(femaleStylists),
+      if (femaleStylists != null) "female_stylists": jsonEncode(femaleStylists),
     };
   }
 }
