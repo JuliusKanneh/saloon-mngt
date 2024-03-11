@@ -54,36 +54,6 @@ class FirebaseDBApi {
     return maleStylists;
   }
 
-  // Future<List<String>> getAvailableMaleStylists({
-  //   required String salonId,
-  //   required DateTime date,
-  //   required TimeOfDay time,
-  // }) async {
-  //   maleStylists.clear();
-  //   var docSnapshot = await _db.collection('saloon').doc(salonId).get();
-  //   Salon salon = Salon.fromFirestore(docSnapshot);
-  //   maleStylists = salon.maleStylists!;
-  //   log('Male Stylists: ${salon.maleStylists}');
-  //   log("date: ${date.toString().split(" ")[0]}");
-
-  //   DateTime dateTime =
-  //       DateTime(date.year, date.month, date.day, time.hour, time.minute);
-  //   final cutoffTime = dateTime.subtract(const Duration(minutes: 45));
-  //   log('cutoffTime: $cutoffTime');
-
-  //   var querySnapshot = await _db
-  //       .collection('booking')
-  //       .where("saloon_id", isEqualTo: salonId)
-  //       .where("date", isEqualTo: date.toString().split(" ")[0])
-  //       // where time is less than 45 minutes from a given time
-  //       .where("time", isGreaterThanOrEqualTo: cutoffTime)
-  //       .get();
-
-  //   log('response: ${querySnapshot.docs}');
-
-  //   return maleStylists;
-  // }
-
   Future<List<String>> getAvailableMaleStylists({
     required String salonId,
     required DateTime date,
@@ -137,6 +107,51 @@ class FirebaseDBApi {
     femaleStylists = salon.femaleStylists!;
     log('Slon name: ${salon.name}');
     log('Female Stylists: ${salon.femaleStylists}');
+
+    return femaleStylists;
+  }
+
+  Future<List<String>> getAvailableFemaleStylists({
+    required String salonId,
+    required DateTime date,
+    required TimeOfDay time,
+  }) async {
+    femaleStylists.clear();
+    var docSnapshot = await _db.collection('saloon').doc(salonId).get();
+    Salon salon = Salon.fromFirestore(docSnapshot);
+    femaleStylists = salon.femaleStylists!;
+    log('Female Stylists: ${salon.femaleStylists}');
+    log("date: ${date.toString().split(" ")[0]}");
+
+    TimeOfDay cutoffTime = TimeOfDay(hour: time.hour, minute: time.minute - 45);
+    log('cutoffTime: $cutoffTime');
+
+    var querySnapshot = await _db
+        .collection('booking')
+        .where("saloon_id", isEqualTo: salonId)
+        .where("date", isEqualTo: date.toString().split(" ")[0])
+        .get();
+
+    log('response: ${querySnapshot.docs}');
+
+    List<String> bookedStylists = [];
+
+    for (var doc in querySnapshot.docs) {
+      final timeString = doc['time']; // e.g., "TimeOfDay(13:00)"
+      final timeParts =
+          timeString.substring(10, timeString.length - 1).split(':');
+      final bookingTime = TimeOfDay(
+          hour: int.parse(timeParts[0]), minute: int.parse(timeParts[1]));
+
+      if (bookingTime.hour > cutoffTime.hour ||
+          (bookingTime.hour == cutoffTime.hour &&
+              bookingTime.minute > cutoffTime.minute)) {
+        bookedStylists.add(doc['stylist']);
+      }
+    }
+
+    // Remove booked stylists from maleStylists
+    femaleStylists.removeWhere((stylist) => bookedStylists.contains(stylist));
 
     return femaleStylists;
   }

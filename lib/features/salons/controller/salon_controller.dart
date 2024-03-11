@@ -27,10 +27,11 @@ class SalonController extends StateNotifier<bool> {
     return await _dbApi.getMaleStylistsBySalonId(id: salonId);
   }
 
-  Future<List<String>> getAvailableMaleStylists(
-      {required String salonId,
-      required DateTime date, 
-      required TimeOfDay time,}) async {
+  Future<List<String>> getAvailableMaleStylists({
+    required String salonId,
+    required DateTime date,
+    required TimeOfDay time,
+  }) async {
     return await _dbApi.getAvailableMaleStylists(
       salonId: salonId,
       date: date,
@@ -42,6 +43,18 @@ class SalonController extends StateNotifier<bool> {
     //TODO: work on assigning a salon to a manager and update this salon id to work dynamically.
     // return await _dbApi.getFemaleStylistsBySalonId(id: "6jv2XDSKAAAus0Xzu7zT");
     return await _dbApi.getFemaleStylistsBySalonId(id: salonId);
+  }
+
+  Future<List<String>> getAvailableFemaleStylists({
+    required String salonId,
+    required DateTime date,
+    required TimeOfDay time,
+  }) async {
+    return await _dbApi.getAvailableFemaleStylists(
+      salonId: salonId,
+      date: date,
+      time: time,
+    );
   }
 
   FutureEither<Salon> addSaloon(Salon saloon) async {

@@ -441,7 +441,11 @@ class _BookingViewState extends ConsumerState<BookingFormView> {
     } else if (selectedGender == 'female') {
       var fStylelists = await ref
           .watch(salonControllerProvider.notifier)
-          .getFemaleStylists(salonId: widget.saloon!.id!);
+          .getAvailableFemaleStylists(
+            salonId: widget.saloon!.id!,
+            date: selectedDate!,
+            time: selectedTime!,
+          );
       log('fStylelists: $fStylelists');
       setState(() {
         currentStyles = List.from(femaleStyles);
