@@ -90,6 +90,14 @@ class _BookingHistoryCardState extends ConsumerState<BookingHistoryCard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 5),
+                Text(
+                  'Stylist: ${widget.booking.stylist}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

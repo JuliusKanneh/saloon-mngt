@@ -28,6 +28,7 @@ class SalonsView extends ConsumerStatefulWidget {
 
 class _SalonsViewState extends ConsumerState<SalonsView> {
   late Future<List<Salon>> saloonFuture;
+  late Future<List<UserAccount>> managerUserListFuture;
   bool addSalonLoading = false;
   final formKey = GlobalKey<FormState>();
   final salonNameController = TextEditingController();
@@ -36,10 +37,16 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
   final salonManagerNameController = TextEditingController();
   Uint8List? _image;
   String? logoUrl;
+  String selectedManager = "";
 
   Future<List<Salon>> _getAllSaloons() {
     var saloonFuture = widget.salonController.getAllSaloons();
     return saloonFuture;
+  }
+
+  Future<List<UserAccount>> _getManagerUsers() {
+    var managerUserListFuture = widget.salonController.getManagerUsers();
+    return managerUserListFuture;
   }
 
   Future<void> getPhotoFromGallery() async {
@@ -59,6 +66,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
   void initState() {
     super.initState();
     saloonFuture = _getAllSaloons();
+    managerUserListFuture = _getManagerUsers();
   }
 
   @override
@@ -176,13 +184,53 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                       controller: salonContactController,
                       validator: (value) => validator(value),
                     ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Manager Name',
-                      ),
-                      controller: salonManagerNameController,
-                      validator: (value) => validator(value),
+
+                    //TODO: Assign the selected user account to a salon.
+                    FutureBuilder(
+                      future: managerUserListFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.data != null) {
+                            selectedManager = snapshot.data![0].name!;
+                            return DropdownButtonFormField(
+                              decoration: const InputDecoration(
+                                hintText: "Select Manager",
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                              ),
+                              value: snapshot.data![0].id,
+                              items:
+                                  snapshot.data!.map((UserAccount userAccount) {
+                                return DropdownMenuItem<dynamic>(
+                                  value: userAccount.id,
+                                  child: Text(userAccount.name!),
+                                );
+                              }).toList(),
+                              onChanged: (dynamic newValue) {
+                                setState(
+                                  () {
+                                    selectedManager = newValue;
+                                  },
+                                );
+                                // print(controller.roleLabel.value);
+                              },
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      },
                     ),
+
+                    // TextFormField(
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Manager Name',
+                    //   ),
+                    //   controller: salonManagerNameController,
+                    //   validator: (value) => validator(value),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),

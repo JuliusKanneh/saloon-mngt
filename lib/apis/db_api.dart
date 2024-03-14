@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:saloon/common/common.dart';
+import 'package:saloon/constants/constants.dart';
 import 'package:saloon/models/booking.dart';
 import 'package:saloon/models/saloon.dart';
 import 'package:saloon/models/user_account.dart';
@@ -20,6 +21,7 @@ class FirebaseDBApi {
   List<String> femaleStylists = [];
   List<Salon> favoriteSaloons = [];
   List<Booking> allBookings = [];
+  List<UserAccount> allManagerUsers = [];
 
   FirebaseDBApi() : _db = FirebaseFirestore.instance;
 
@@ -305,6 +307,24 @@ class FirebaseDBApi {
       log('value: $value');
       return UserAccount.fromFirestore(value);
     });
+  }
+
+  Future<List<UserAccount>> getManagerUsers() async {
+    allManagerUsers.clear();
+    var querySnapshot = await _db
+        .collection('user')
+        .where("role", isEqualTo: managerUserRole)
+        .get();
+    log('response: ${querySnapshot.docs}');
+
+    for (var userAccount in querySnapshot.docs) {
+      log('Manager Account ${userAccount.id}: $userAccount');
+      allManagerUsers.add(UserAccount.fromFirestore(userAccount));
+    }
+
+    log('all manager users accounts: $allManagerUsers');
+
+    return allManagerUsers;
   }
 
   /// Update the user profile picture url to the database.

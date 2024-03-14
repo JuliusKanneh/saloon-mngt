@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/models/saloon.dart';
+import 'package:saloon/models/user_account.dart';
 
 final salonControllerProvider =
     StateNotifierProvider<SalonController, bool>((ref) {
@@ -19,6 +20,10 @@ class SalonController extends StateNotifier<bool> {
 
   Future<List<Salon>> getAllSaloons() async {
     return await _dbApi.getAllSaloons();
+  }
+
+  Future<List<UserAccount>> getManagerUsers() async {
+    return await _dbApi.getManagerUsers();
   }
 
   Future<List<String>> getMaleStylists({required String salonId}) async {

@@ -13,6 +13,7 @@ import 'package:saloon/features/home/home_controller.dart';
 import 'package:saloon/features/home/widgets/salon_card.dart';
 import 'package:saloon/constants/constants.dart';
 import 'package:saloon/models/saloon.dart';
+import 'package:saloon/models/user_account.dart';
 import 'package:saloon/providers/user_account_provider.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -43,14 +44,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
   final salonManagerNameController = TextEditingController();
 
   bool addSalonLoading = false;
+  String selectedManager = "";
 
   late Future<List<Salon>> saloonsFuture;
   late Future<List<Salon>> favoriteSaloonsFuture;
+  late Future<List<UserAccount>> managerUserListFuture;
   Uint8List? _image;
 
   Future<List<Salon>> _getAllSaloons() {
     var saloonFuture = widget.dbApi.getAllSaloons();
     return saloonFuture;
+  }
+
+  Future<List<UserAccount>> _getManagerUsers() {
+    var managerUserListFuture = widget.dbApi.getManagerUsers();
+    return managerUserListFuture;
   }
 
   Future<List<Salon>> _getFavoriteSaloons() {
@@ -75,6 +83,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     super.initState();
     saloonsFuture = _getAllSaloons();
     favoriteSaloonsFuture = _getFavoriteSaloons();
+    managerUserListFuture = _getManagerUsers();
   }
 
   @override
@@ -192,16 +201,69 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                 validator: (value) =>
                                                     validator(value),
                                               ),
-                                              TextFormField(
-                                                decoration:
-                                                    const InputDecoration(
-                                                  labelText: 'Manager Name',
-                                                ),
-                                                controller:
-                                                    salonManagerNameController,
-                                                validator: (value) =>
-                                                    validator(value),
+
+                                              //TODO: Assign the selected user account to a salon.
+                                              FutureBuilder(
+                                                future: managerUserListFuture,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.done) {
+                                                    if (snapshot.data != null) {
+                                                      selectedManager = snapshot
+                                                          .data![0].name!;
+                                                      return DropdownButtonFormField(
+                                                        decoration:
+                                                            const InputDecoration(
+                                                          hintText:
+                                                              "Select Manager",
+                                                          floatingLabelBehavior:
+                                                              FloatingLabelBehavior
+                                                                  .never,
+                                                        ),
+                                                        value: snapshot
+                                                            .data![0].id,
+                                                        items: snapshot.data!
+                                                            .map((UserAccount
+                                                                userAccount) {
+                                                          return DropdownMenuItem<
+                                                              dynamic>(
+                                                            value:
+                                                                userAccount.id,
+                                                            child: Text(
+                                                                userAccount
+                                                                    .name!),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged:
+                                                            (dynamic newValue) {
+                                                          setState(
+                                                            () {
+                                                              selectedManager =
+                                                                  newValue;
+                                                            },
+                                                          );
+                                                          // print(controller.roleLabel.value);
+                                                        },
+                                                      );
+                                                    } else {
+                                                      return const SizedBox();
+                                                    }
+                                                  } else {
+                                                    return const CircularProgressIndicator();
+                                                  }
+                                                },
                                               ),
+                                              // TextFormField(
+                                              //   decoration:
+                                              //       const InputDecoration(
+                                              //     labelText: 'Manager Name',
+                                              //   ),
+                                              //   controller:
+                                              //       salonManagerNameController,
+                                              //   validator: (value) =>
+                                              //       validator(value),
+                                              // ),
                                               const SizedBox(
                                                 height: 10,
                                               ),
