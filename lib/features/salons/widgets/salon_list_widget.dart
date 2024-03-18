@@ -34,7 +34,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
   final salonNameController = TextEditingController();
   final salonAddressController = TextEditingController();
   final salonContactController = TextEditingController();
-  final salonManagerNameController = TextEditingController();
+  final salonManagerIdTextEditingController = TextEditingController();
   Uint8List? _image;
   String? logoUrl;
 
@@ -70,7 +70,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
     salonNameController.text = widget.saloon.name!;
     salonAddressController.text = widget.saloon.address!;
     salonContactController.text = widget.saloon.contact!;
-    salonManagerNameController.text = widget.saloon.managerName!;
+    salonManagerIdTextEditingController.text = widget.saloon.managerId!;
   }
 
   @override
@@ -316,7 +316,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                       decoration: const InputDecoration(
                         labelText: 'Manager Name',
                       ),
-                      controller: salonManagerNameController,
+                      controller: salonManagerIdTextEditingController,
                       validator: (value) => validator(value),
                     ),
                     const SizedBox(
@@ -375,7 +375,7 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                     name: salonNameController.text.trim(),
                     address: salonAddressController.text.trim(),
                     contact: salonContactController.text.trim(),
-                    managerName: salonManagerNameController.text.trim(),
+                    managerId: salonManagerIdTextEditingController.text.trim(),
                     photoUrl: logoUrl ?? widget.saloon.photoUrl,
                   );
                   widget.saloon.toFirestoreWithId();

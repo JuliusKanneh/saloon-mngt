@@ -41,10 +41,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
   final salonNameController = TextEditingController();
   final salonAddressController = TextEditingController();
   final salonContactController = TextEditingController();
-  final salonManagerNameController = TextEditingController();
+  final salonManagerIdTextEditingController = TextEditingController();
 
   bool addSalonLoading = false;
-  String selectedManager = "";
+  String selectedManagerId = "";
 
   late Future<List<Salon>> saloonsFuture;
   late Future<List<Salon>> favoriteSaloonsFuture;
@@ -209,9 +209,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                   if (snapshot
                                                           .connectionState ==
                                                       ConnectionState.done) {
-                                                    if (snapshot.data != null) {
-                                                      selectedManager = snapshot
-                                                          .data![0].name!;
+                                                    if (snapshot.hasData &&
+                                                        snapshot
+                                                            .data!.isNotEmpty) {
+                                                      selectedManagerId =
+                                                          snapshot.data![0].id!;
                                                       return DropdownButtonFormField(
                                                         decoration:
                                                             const InputDecoration(
@@ -239,7 +241,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                             (dynamic newValue) {
                                                           setState(
                                                             () {
-                                                              selectedManager =
+                                                              selectedManagerId =
                                                                   newValue;
                                                             },
                                                           );
@@ -247,7 +249,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                         },
                                                       );
                                                     } else {
-                                                      return const SizedBox();
+                                                      return const Text(
+                                                        "There is no manager user account. Ensure that the manager account has been created before adding a salon.",
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      );
                                                     }
                                                   } else {
                                                     return const CircularProgressIndicator();
@@ -260,7 +269,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                               //     labelText: 'Manager Name',
                                               //   ),
                                               //   controller:
-                                              //       salonManagerNameController,
+                                              //       salonManagerIdTextEditingController,
                                               //   validator: (value) =>
                                               //       validator(value),
                                               // ),
@@ -313,6 +322,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                           },
                                           child: const Text('Cancel'),
                                         ),
+
+                                        //TODO: disable the add button to avoid the user from submitting the data whithout the manager set.
                                         TextButton(
                                           onPressed: () async {
                                             // validate the form
@@ -333,10 +344,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                               contact: salonContactController
                                                   .text
                                                   .trim(),
-                                              managerName:
-                                                  salonManagerNameController
-                                                      .text
-                                                      .trim(),
+                                              managerId: selectedManagerId,
                                               photoUrl: logoUrl,
                                             );
 

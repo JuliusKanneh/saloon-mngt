@@ -113,7 +113,7 @@ class _StylistsWidgetState extends ConsumerState<StylistsWidget> {
                                         .watch(salonControllerProvider.notifier)
                                         .addStylistToSalon(
                                           //TODO: to be fixed -using Precious Salon for testing now
-                                          salonId: "6jv2XDSKAAAus0Xzu7zT",
+                                          // salonId: "6jv2XDSKAAAus0Xzu7zT",
                                           name: nameTextEditiingController.text,
                                           gender: gender,
                                         );

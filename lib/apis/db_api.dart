@@ -17,6 +17,7 @@ final firebaseDBApiProvider = Provider((ref) {
 class FirebaseDBApi {
   final FirebaseFirestore _db;
   List<Salon> allSaloons = [];
+  List<Salon> managingSalons = [];
   List<String> maleStylists = [];
   List<String> femaleStylists = [];
   List<Salon> favoriteSaloons = [];
@@ -44,6 +45,30 @@ class FirebaseDBApi {
     log('all rsvps: $allSaloons');
 
     return allSaloons;
+  }
+
+  /// Retrieves a list of salons associated with a specific manager ID.
+  ///
+  /// The [managerId] parameter specifies the ID of the manager.
+  /// Returns a [Future] that completes with a list of [Salon] objects.
+  /// The returned list contains salons that have the specified manager ID.
+  /// If no salons are found, an empty list is returned.
+  Future<List<Salon>> getSalonByManagerId(String managerId) async {
+    managingSalons.clear();
+    var querySnapshot = await _db
+        .collection('saloon')
+        .where("manager_id", isEqualTo: managerId)
+        .get();
+    log('response: ${querySnapshot.docs}');
+
+    for (var saloon in querySnapshot.docs) {
+      log('Saloon ${saloon.id}: $saloon');
+      managingSalons.add(Salon.fromFirestore(saloon));
+    }
+
+    log('all rsvps: $managingSalons');
+
+    return managingSalons;
   }
 
   Future<List<String>> getMaleStylistsBySalonId({required String id}) async {

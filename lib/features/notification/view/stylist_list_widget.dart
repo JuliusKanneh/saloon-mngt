@@ -29,7 +29,7 @@ class _StylistListWidget extends ConsumerState<StylistListWidget> {
   final salonNameController = TextEditingController();
   final salonAddressController = TextEditingController();
   final salonContactController = TextEditingController();
-  final salonManagerNameController = TextEditingController();
+  final salonManagerIdTextEditingController = TextEditingController();
 
   /// This is used to refresh the salons_view after deleting a salon so that the deletion can be refelected.
   // void refreshMainWidget() {
@@ -46,7 +46,7 @@ class _StylistListWidget extends ConsumerState<StylistListWidget> {
     // salonNameController.text = widget.saloon.name!;
     // salonAddressController.text = widget.saloon.address!;
     // salonContactController.text = widget.saloon.contact!;
-    // salonManagerNameController.text = widget.saloon.managerName!;
+    // salonManagerIdTextEditingController.text = widget.saloon.managerId!;
   }
 
   @override
@@ -289,7 +289,7 @@ class _StylistListWidget extends ConsumerState<StylistListWidget> {
                       decoration: const InputDecoration(
                         labelText: 'Manager Name',
                       ),
-                      controller: salonManagerNameController,
+                      controller: salonManagerIdTextEditingController,
                       validator: (value) => validator(value),
                     ),
                     const SizedBox(

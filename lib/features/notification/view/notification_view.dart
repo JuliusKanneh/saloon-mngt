@@ -21,7 +21,7 @@ class _NotificationViewState extends ConsumerState<NotificationView> {
 
   Future<List<String>> _getMaleStylist() {
     var maleStylistFuture =
-        widget.salonController.getMaleStylists(salonId: "6jv2XDSKAAAus0Xzu7zT");
+        widget.salonController.getMaleStylists();
     return maleStylistFuture;
   }
 

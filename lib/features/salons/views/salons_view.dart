@@ -34,7 +34,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
   final salonNameController = TextEditingController();
   final salonAddressController = TextEditingController();
   final salonContactController = TextEditingController();
-  final salonManagerNameController = TextEditingController();
+  final salonManagerIdTextEditingController = TextEditingController();
   Uint8List? _image;
   String? logoUrl;
   String selectedManager = "";
@@ -228,7 +228,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                     //   decoration: const InputDecoration(
                     //     labelText: 'Manager Name',
                     //   ),
-                    //   controller: salonManagerNameController,
+                    //   controller: salonManagerIdTextEditingController,
                     //   validator: (value) => validator(value),
                     // ),
                     const SizedBox(
@@ -284,7 +284,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                     name: salonNameController.text.trim(),
                     address: salonAddressController.text.trim(),
                     contact: salonContactController.text.trim(),
-                    managerName: salonManagerNameController.text.trim(),
+                    managerId: salonManagerIdTextEditingController.text.trim(),
                     photoUrl: logoUrl,
                   );
 

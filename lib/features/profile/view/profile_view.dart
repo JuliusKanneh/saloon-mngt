@@ -87,7 +87,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                                       backgroundImage: MemoryImage(_image!),
                                     )
                                   : ClipOval(
-                                      child: (user!.photoUrl == null)
+                                      child: (user!.photoUrl == null ||
+                                              user.photoUrl!.isEmpty)
                                           ? Image.asset("assets/avatar.png")
                                           : Image.network(
                                               //TODO: Add default image if user has not uploaded any image

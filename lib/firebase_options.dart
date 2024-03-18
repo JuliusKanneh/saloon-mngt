@@ -17,24 +17,15 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -52,12 +43,39 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyB0Szdn613j70HU5r_s6Fc3-ArYKSHW7dw',
+    appId: '1:30184954202:web:2ca18d285d29b3532efb63',
+    messagingSenderId: '30184954202',
+    projectId: 'salon-management-ee7b0',
+    authDomain: 'salon-management-ee7b0.firebaseapp.com',
+    storageBucket: 'salon-management-ee7b0.appspot.com',
+    measurementId: 'G-ZD08VZH0YN',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAKGeW3RWU-QqMWqeXrtAi9mOlRf4-BqBM',
-    appId: '1:721775011609:android:d967ad6a2d038f6d7e4788',
-    messagingSenderId: '721775011609',
-    projectId: 'multi-salon-app',
-    databaseURL: 'https://multi-salon-app-default-rtdb.firebaseio.com',
-    storageBucket: 'multi-salon-app.appspot.com',
+    apiKey: 'AIzaSyBjNAWti_HpjvdXQ1OivDUlf7KnLSAK_Tk',
+    appId: '1:30184954202:android:31225edf8f98ed3c2efb63',
+    messagingSenderId: '30184954202',
+    projectId: 'salon-management-ee7b0',
+    storageBucket: 'salon-management-ee7b0.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBcbnJ7a2WDTayQXRV4pH-NiBbNicAcKRI',
+    appId: '1:30184954202:ios:bde7b6e2d82774a12efb63',
+    messagingSenderId: '30184954202',
+    projectId: 'salon-management-ee7b0',
+    storageBucket: 'salon-management-ee7b0.appspot.com',
+    iosBundleId: 'com.example.saloon',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBcbnJ7a2WDTayQXRV4pH-NiBbNicAcKRI',
+    appId: '1:30184954202:ios:513254d1079bcb012efb63',
+    messagingSenderId: '30184954202',
+    projectId: 'salon-management-ee7b0',
+    storageBucket: 'salon-management-ee7b0.appspot.com',
+    iosBundleId: 'com.example.saloon.RunnerTests',
   );
 }

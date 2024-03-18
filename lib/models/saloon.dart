@@ -7,7 +7,7 @@ class Salon {
   final String? name;
   final String? address;
   final String? contact;
-  final String? managerName;
+  final String? managerId;
   final String? photoUrl;
   final bool? isFavorite;
   final List<String>? maleStylists;
@@ -18,7 +18,7 @@ class Salon {
     this.address,
     this.name,
     this.contact,
-    this.managerName,
+    this.managerId,
     this.photoUrl,
     this.isFavorite = false,
     this.maleStylists,
@@ -34,7 +34,7 @@ class Salon {
       id: snapshot.id,
       address: data?['address'],
       photoUrl: data?['photo_url'],
-      managerName: data?['manager_name'],
+      managerId: data?['manager_id'],
       name: data?['name'],
       contact: data?['contact'],
       isFavorite: data?['is_favorite'],
@@ -48,7 +48,7 @@ class Salon {
       if (name != null) "name": name,
       if (address != null) "address": address,
       if (photoUrl != null) "photo_url": photoUrl,
-      if (managerName != null) "manager_name": managerName,
+      if (managerId != null) "manager_id": managerId,
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
       if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),
@@ -63,7 +63,7 @@ class Salon {
       if (name != null) "name": name,
       if (address != null) "address": address,
       if (photoUrl != null) "photo_url": photoUrl,
-      if (managerName != null) "manager_name": managerName,
+      if (managerId != null) "manager_id": managerId,
       if (contact != null) "contact": contact,
       if (isFavorite != null) "is_favorite": isFavorite,
       if (maleStylists != null) "male_stylists": jsonEncode(maleStylists),

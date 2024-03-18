@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:saloon/apis/db_api.dart';
 import 'package:saloon/common/common.dart';
 import 'package:saloon/models/saloon.dart';
@@ -26,10 +28,13 @@ class SalonController extends StateNotifier<bool> {
     return await _dbApi.getManagerUsers();
   }
 
-  Future<List<String>> getMaleStylists({required String salonId}) async {
-    //TODO: work on assigning a salon to a manager and update this salon id to work dynamically.
-    // return await _dbApi.getMaleStylistsBySalonId(id: "6jv2XDSKAAAus0Xzu7zT");
-    return await _dbApi.getMaleStylistsBySalonId(id: salonId);
+  Future<List<String>> getMaleStylists() async {
+    List<Salon> managingSalons = await _getSalonByManagerId();
+
+    if (managingSalons.isNotEmpty) {
+      return await _dbApi.getMaleStylistsBySalonId(id: managingSalons[0].id!);
+    }
+    return [];
   }
 
   Future<List<String>> getAvailableMaleStylists({
@@ -44,10 +49,12 @@ class SalonController extends StateNotifier<bool> {
     );
   }
 
-  Future<List<String>> getFemaleStylists({required String salonId}) async {
-    //TODO: work on assigning a salon to a manager and update this salon id to work dynamically.
-    // return await _dbApi.getFemaleStylistsBySalonId(id: "6jv2XDSKAAAus0Xzu7zT");
-    return await _dbApi.getFemaleStylistsBySalonId(id: salonId);
+  Future<List<String>> getFemaleStylists() async {
+    List<Salon> managingSalons = await _getSalonByManagerId();
+    if (managingSalons.isNotEmpty) {
+      return await _dbApi.getFemaleStylistsBySalonId(id: managingSalons[0].id!);
+    }
+    return [];
   }
 
   Future<List<String>> getAvailableFemaleStylists({
@@ -67,15 +74,29 @@ class SalonController extends StateNotifier<bool> {
     return await _dbApi.addSalon(saloon);
   }
 
+  Future<List<Salon>> _getSalonByManagerId() async {
+    return await _dbApi
+        .getSalonByManagerId(FirebaseAuth.instance.currentUser!.uid);
+  }
+
   FutureEither<void> addStylistToSalon({
-    required String salonId,
+    // required String salonId,
     required String name,
     required String gender,
   }) async {
-    return await _dbApi.addStylistToSalon(
-      salonId: salonId,
-      name: name,
-      gender: gender,
+    List<Salon> managingSalons = await _getSalonByManagerId();
+    if (managingSalons.isNotEmpty) {
+      return await _dbApi.addStylistToSalon(
+        salonId: managingSalons[0].id!,
+        name: name,
+        gender: gender,
+      );
+    }
+    return left(
+      Failure(
+        message: "You ar enot managing any salon",
+        stackTrace: StackTrace.current,
+      ),
     );
   }
 
