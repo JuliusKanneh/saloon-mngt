@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -212,8 +213,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                     if (snapshot.hasData &&
                                                         snapshot
                                                             .data!.isNotEmpty) {
-                                                      selectedManagerId =
-                                                          snapshot.data![0].id!;
                                                       return DropdownButtonFormField(
                                                         decoration:
                                                             const InputDecoration(
@@ -223,8 +222,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                               FloatingLabelBehavior
                                                                   .never,
                                                         ),
-                                                        value: snapshot
-                                                            .data![0].id,
                                                         items: snapshot.data!
                                                             .map((UserAccount
                                                                 userAccount) {
@@ -239,6 +236,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                         }).toList(),
                                                         onChanged:
                                                             (dynamic newValue) {
+                                                          log('Dropdown value: $newValue');
                                                           setState(
                                                             () {
                                                               selectedManagerId =
@@ -295,7 +293,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                     onPressed: () async {
                                                       var logoUrl =
                                                           await uploadSalonLogo(
-                                                              Random()
+                                                              math.Random()
                                                                   .nextInt(
                                                                       1000000)
                                                                   .toString());

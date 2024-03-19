@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -34,10 +35,10 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
   final salonNameController = TextEditingController();
   final salonAddressController = TextEditingController();
   final salonContactController = TextEditingController();
-  final salonManagerIdTextEditingController = TextEditingController();
+  // final salonManagerIdTextEditingController = TextEditingController();
   Uint8List? _image;
   String? logoUrl;
-  String selectedManager = "";
+  String selectedManagerId = "";
 
   Future<List<Salon>> _getAllSaloons() {
     var saloonFuture = widget.salonController.getAllSaloons();
@@ -157,7 +158,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Add Saloon'),
+            title: const Text('Add Salon'),
             content: SingleChildScrollView(
               child: Form(
                 key: formKey,
@@ -185,20 +186,18 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                       validator: (value) => validator(value),
                     ),
 
-                    //TODO: Assign the selected user account to a salon.
+                    // Assigning manager to the salon from the list of registered manager users.
                     FutureBuilder(
                       future: managerUserListFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.data != null) {
-                            selectedManager = snapshot.data![0].name!;
                             return DropdownButtonFormField(
                               decoration: const InputDecoration(
                                 hintText: "Select Manager",
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.never,
                               ),
-                              value: snapshot.data![0].id,
                               items:
                                   snapshot.data!.map((UserAccount userAccount) {
                                 return DropdownMenuItem<dynamic>(
@@ -207,9 +206,10 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                                 );
                               }).toList(),
                               onChanged: (dynamic newValue) {
+                                log('Dropdown value: $newValue');
                                 setState(
                                   () {
-                                    selectedManager = newValue;
+                                    selectedManagerId = newValue;
                                   },
                                 );
                                 // print(controller.roleLabel.value);
@@ -284,7 +284,7 @@ class _SalonsViewState extends ConsumerState<SalonsView> {
                     name: salonNameController.text.trim(),
                     address: salonAddressController.text.trim(),
                     contact: salonContactController.text.trim(),
-                    managerId: salonManagerIdTextEditingController.text.trim(),
+                    managerId: selectedManagerId,
                     photoUrl: logoUrl,
                   );
 

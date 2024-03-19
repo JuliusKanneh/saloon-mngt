@@ -313,8 +313,10 @@ class _SalonListWidget extends ConsumerState<SalonListWidget> {
                       validator: (value) => validator(value),
                     ),
                     TextFormField(
+                      readOnly: true,
+                      style: const TextStyle(color: Colors.grey),
                       decoration: const InputDecoration(
-                        labelText: 'Manager Name',
+                        labelText: 'Manager ID',
                       ),
                       controller: salonManagerIdTextEditingController,
                       validator: (value) => validator(value),
